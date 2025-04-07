@@ -7,7 +7,7 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
 import axios from 'axios';
-import { useForm, submitHandler, Controller } from 'react-hook-form';
+import { useForm,  Controller } from 'react-hook-form';
 
 const { Option } = Select;
 
@@ -16,9 +16,9 @@ const ListaPatologias = () => {
   const [isPermissionModalVisible, setIsPermissionModalVisible] = useState(false);
   const [patologias, setPatologias] = useState([]);
   const [patologia, setPatologia] = useState({});
-  const { handleSubmit, reset, setValue, register, control } = useForm({});
+  const { handleSubmit, reset, setValue, control } = useForm({});
   const [mode, setMode] = useState("");
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
+  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; 
 
   const showRoleModal = () => {
     setIsRoleModalVisible(true);

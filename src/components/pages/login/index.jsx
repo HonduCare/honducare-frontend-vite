@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { EyeOff, Eye } from 'react-feather';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { EyeOff, Eye } from "react-feather";
 import { login02, loginlogo } from "../../imagepath";
-import { auth } from "../../../FirebaseConfig";
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import { auth } from "../../../FirebaseConfig.js";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -23,16 +23,19 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/Verificar`, { email });
+      const response = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/Verificar`,
+        { email }
+      );
       if (response.data.autenticated) {
-        localStorage.setItem('user', JSON.stringify(response.data.data));
-        localStorage.setItem('token', response.data.token);
-        navigate('/Bienvenida');
+        localStorage.setItem("user", JSON.stringify(response.data.data));
+        localStorage.setItem("token", response.data.token);
+        navigate("/Bienvenida");
       } else {
         Swal.fire({
-          title: 'Error!',
-          text: 'Correo o contraseña incorrectos. Por favor, intente nuevamente.',
-          icon: 'error',
+          title: "Error!",
+          text: "Correo o contraseña incorrectos. Por favor, intente nuevamente.",
+          icon: "error",
           timer: 3000,
           showConfirmButton: false,
         });
@@ -40,25 +43,30 @@ const Login = () => {
     } catch (error) {
       if (error.response) {
         Swal.fire({
-          title: 'Error!',
-          text: error.response.data.message || 'Error al verificar los datos. Por favor, intente nuevamente.',
-          icon: 'error',
+          title: "Error!",
+          text:
+            error.response.data.message ||
+            "Error al verificar los datos. Por favor, intente nuevamente.",
+          icon: "error",
           timer: 3000,
           showConfirmButton: false,
         });
-      } else if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+      } else if (
+        error.code === "auth/wrong-password" ||
+        error.code === "auth/user-not-found"
+      ) {
         Swal.fire({
-          title: 'Error!',
-          text: 'Correo o contraseña incorrectos. Por favor, intente nuevamente.',
-          icon: 'error',
+          title: "Error!",
+          text: "Correo o contraseña incorrectos. Por favor, intente nuevamente.",
+          icon: "error",
           timer: 3000,
           showConfirmButton: false,
         });
       } else {
         Swal.fire({
-          title: 'Error!',
+          title: "Error!",
           text: `Ha ocurrido un error inesperado. Por favor, intente nuevamente.`,
-          icon: 'error',
+          icon: "error",
           timer: 3000,
           showConfirmButton: false,
         });
@@ -66,7 +74,8 @@ const Login = () => {
     }
   };
 
-  const handleChangePassword = () => {
+  {
+    /* const handleChangePassword = () => {
     if (email) {
       navigate('/changepassword', { state: { email } }); // Redirige al cambio de contraseña con el email
     } else {
@@ -79,10 +88,12 @@ const Login = () => {
       });
     }
   };
+  */
+  }
 
   const imageStyle = {
-    width: '100%',
-    height: 'auto',
+    width: "100%",
+    height: "auto",
   };
 
   return (
@@ -101,7 +112,7 @@ const Login = () => {
               <div className="login-wrapper">
                 <div className="loginbox">
                   <div className="login-right">
-                    <div className="login-right-wrap">
+                    <div className="login-right-wrap h-75">
                       <div className="account-logo size">
                         <img src={loginlogo} alt="#" style={imageStyle} />
                       </div>
@@ -120,13 +131,16 @@ const Login = () => {
                         <div className="form-group">
                           <label>Contraseña</label>
                           <input
-                            type={passwordVisible ? 'text' : 'password'}
+                            type={passwordVisible ? "text" : "password"}
                             className="form-control pass-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                           />
-                          <span className="toggle-password" onClick={togglePasswordVisibility}>
+                          <span
+                            className="toggle-password"
+                            onClick={togglePasswordVisibility}
+                          >
                             {passwordVisible ? (
                               <EyeOff className="react-feather-custom" />
                             ) : (
@@ -142,15 +156,20 @@ const Login = () => {
                               <span className="checkmark" />
                             </label>
                           </div>
-                          <Link to="/forgotpassword">Olvidó su contraseña?</Link>
+                          <Link to="/forgotpassword">
+                            Olvidó su contraseña?
+                          </Link>
                         </div>
                         <div className="form-group login-btn">
-                          <button type="submit" className="btn btn-primary btn-block">
+                          <button
+                            type="submit"
+                            className="btn btn-primary btn-block"
+                          >
                             Iniciar sesión
                           </button>
                         </div>
                       </form>
-                      <div className="next-sign">
+                      {/*<div className="next-sign">
                         <p className="account-subtitle">
                           ¿Necesita una cuenta? <Link to="/signup">Registrarse</Link>
                         </p>
@@ -163,7 +182,7 @@ const Login = () => {
                             Cambiar Contraseña
                           </button>
                         </p>
-                      </div>
+                      </div>*/}
                     </div>
                   </div>
                 </div>
