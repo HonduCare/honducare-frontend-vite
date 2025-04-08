@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
 import Header from '../Header';
@@ -91,12 +90,8 @@ const AddSchedule = () => {
                               onChange={setSelectedOption}
                               options={options}
                               menuPortalTarget={document.body}
-                              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                              id="search-commodity"
-                              components={{
-                                IndicatorSeparator: () => null
-                              }}
                               styles={{
+                                menuPortal: base => ({ ...base, zIndex: 9999 }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
                                   borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1);',
@@ -115,6 +110,10 @@ const AddSchedule = () => {
                                   width: '35px',
                                   height: '35px',
                                 }),
+                              }}
+                              id="search-commodity"
+                              components={{
+                                IndicatorSeparator: () => null
                               }}
                             />
                             {/* <select className="form-control select">

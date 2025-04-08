@@ -1,33 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input } from 'antd';
-import { Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
-import axios from 'axios';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState, useContext } from "react";
+import { Table, Button, Modal, Form, Input } from "antd";
+import { Link } from "react-router-dom";
+import { UserContext } from "../Helpers/userContext";
+import Swal from "sweetalert2";
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import FeatherIcon from "feather-icons-react/build/FeatherIcon";
+import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
 
 const ListaAntecedentes = () => {
+  const { usuarioLogged } = useContext(UserContext);
   const [isRoleModalVisible, setIsRoleModalVisible] = useState(false);
   const [antecedentes, setAntecedentes] = useState([]);
   const [antecedente, setAntecedente] = useState({});
   const { handleSubmit, reset, setValue, control } = useForm();
   const [mode, setMode] = useState("");
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
+  const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
   const showRoleModal = () => {
     setIsRoleModalVisible(true);
   };
 
   const handleRoleCancel = () => {
-    setValue('id_descripcion_antecedente', '');
-    setValue('descripcion', '');
+    setValue("id_descripcion_antecedente", "");
+    setValue("descripcion", "");
     setIsRoleModalVisible(false);
   };
 
   const obtenerAntecedente = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/antecedentes/antecedente`);
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_REACT_APP_API_URL
+        }/obtener/antecedentes/antecedente`
+      );
       setAntecedentes(response.data);
     } catch (error) {
       console.error("Error al obtener los antecedentes:", error);
@@ -37,34 +43,42 @@ const ListaAntecedentes = () => {
   const handleEditAntecedente = (data) => {
     setAntecedente(data);
     setMode("editar");
-    setValue('id_descripcion_antecedente', data?.id_descripcion_antecedente);
-    setValue('descripcion', data?.descripcion);
+    setValue("id_descripcion_antecedente", data?.id_descripcion_antecedente);
+    setValue("descripcion", data?.descripcion);
     showRoleModal();
   };
 
   const onSubmit = async (data) => {
     try {
-      console.log("Datos enviados al servidor:", data); // Log para revisar datos
-      if (mode === 'crear') {
-        const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/crear/antecedente/`, data);
+      console.log("Datos enviados al servidor:", data);
+      if (mode === "crear") {
+        const response = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/crear/antecedente/`,
+          data
+        );
         if (response.status === 200) {
           Swal.fire({
-            icon: 'success',
-            title: '¡Antecedente Agregado con Exito!',
+            icon: "success",
+            title: "¡Antecedente Agregado con Exito!",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
           reset();
           obtenerAntecedente();
           handleRoleCancel();
         }
-      } else if (mode === 'editar') {
-        const response = await axios.put(`${import.meta.env.VITE_REACT_APP_API_URL}/actualizar/antecedentes/${antecedente.id_descripcion_antecedente}`, data);
+      } else if (mode === "editar") {
+        const response = await axios.put(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/actualizar/antecedentes/${
+            antecedente.id_descripcion_antecedente
+          }`,
+          data
+        );
         if (response.status === 200) {
           Swal.fire({
-            icon: 'success',
-            title: 'Antecedente editado exitosamente',
-            confirmButtonText: 'Aceptar'
+            icon: "success",
+            title: "Antecedente editado exitosamente",
+            confirmButtonText: "Aceptar",
           });
           obtenerAntecedente();
           handleRoleCancel();
@@ -77,12 +91,14 @@ const ListaAntecedentes = () => {
 
   const eliminarAntecedente = async (id) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_REACT_APP_API_URL}/eliminar/antecedentes/${id}`);
+      const response = await axios.delete(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/eliminar/antecedentes/${id}`
+      );
       if (response.status === 200) {
         Swal.fire({
-          title: 'Antecedente eliminado exitosamente',
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
+          title: "Antecedente eliminado exitosamente",
+          icon: "success",
+          confirmButtonText: "Aceptar",
         });
         obtenerAntecedente();
       }
@@ -96,15 +112,14 @@ const ListaAntecedentes = () => {
   }, []);
 
   const antecentesColumns = [
-    
     {
-      title: 'Antecedente',
-      dataIndex: 'descripcion',
-      key: 'descripcion',
+      title: "Antecedente",
+      dataIndex: "descripcion",
+      key: "descripcion",
     },
     {
-      title: '',
-      key: 'actions',
+      title: "",
+      key: "actions",
       render: (_, record) => (
         <div className="text-start">
           <div className="dropdown dropdown-action">
@@ -117,19 +132,30 @@ const ListaAntecedentes = () => {
               <i className="fas fa-ellipsis-v" />
             </Link>
             <div className="dropdown-menu dropdown-menu-start">
-              <button
-                className="dropdown-item"
-                onClick={() => handleEditAntecedente(record)}
-              >
-                <i className="far fa-edit me-2" />
-                Editar
-              </button>
-              <button
-                className="dropdown-item"
-                onClick={() => eliminarAntecedente(record.id_descripcion_antecedente)}
-              >
-                <i className="fa fa-trash-alt m-r-5"></i> Eliminar
-              </button>
+              {usuarioLogged?.rol?.permisos.some(
+                (permiso) => permiso.nombre === "actualizar"
+              ) && (
+                <button
+                  className="dropdown-item"
+                  onClick={() => handleEditAntecedente(record)}
+                >
+                  <i className="far fa-edit me-2" />
+                  Editar
+                </button>
+              )}
+
+              {usuarioLogged?.rol?.permisos.some(
+                (permiso) => permiso.nombre === "eliminar"
+              ) && (
+                <button
+                  className="dropdown-item"
+                  onClick={() =>
+                    eliminarAntecedente(record.id_descripcion_antecedente)
+                  }
+                >
+                  <i className="fa fa-trash-alt m-r-5"></i> Eliminar
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -140,7 +166,7 @@ const ListaAntecedentes = () => {
   return (
     <>
       <Header />
-      <Sidebar id='menu-item6' activeClassName='lista-antecedentes' />
+      <Sidebar id="menu-item6" activeClassName="lista-antecedentes" />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -155,7 +181,9 @@ const ListaAntecedentes = () => {
                       <FeatherIcon icon="chevron-right" />
                     </i>
                   </li>
-                  <li className="breadcrumb-item active">Antecedentes Hospitalarios</li>
+                  <li className="breadcrumb-item active">
+                    Antecedentes Hospitalarios
+                  </li>
                 </ul>
               </div>
             </div>
@@ -171,12 +199,20 @@ const ListaAntecedentes = () => {
                         <h3>Antecedentes</h3>
                       </div>
                       <div className="col-auto text-end">
-                        <Button type="primary" onClick={() => {
-                          showRoleModal();
-                          setMode("crear");
-                        }}className="btn-primary">
-                          Crear Antecedente
-                        </Button>
+                        {usuarioLogged?.rol?.permisos.some(
+                          (permiso) => permiso.nombre === "registrar"
+                        ) && (
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              showRoleModal();
+                              setMode("crear");
+                            }}
+                            className="btn-primary"
+                          >
+                            Crear Antecedente
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -195,12 +231,12 @@ const ListaAntecedentes = () => {
       {/* Modal para crear o editar Antecedente */}
       <Modal
         title={mode === "editar" ? "Editar Antecedente" : "Crear Antecedente"}
-        visible={isRoleModalVisible}
+        open={isRoleModalVisible}
         onCancel={handleRoleCancel}
         footer={null}
       >
         <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-          {mode === 'editar' && (
+          {mode === "editar" && (
             <Form.Item label="ID Antecedente">
               <Controller
                 name="id_descripcion_antecedente"
@@ -209,7 +245,10 @@ const ListaAntecedentes = () => {
               />
             </Form.Item>
           )}
-          <Form.Item label="Nombre del Antecedente" rules={[{ required: true }]}>
+          <Form.Item
+            label="Nombre del Antecedente"
+            rules={[{ required: true }]}
+          >
             <Controller
               name="descripcion"
               control={control}
@@ -217,7 +256,9 @@ const ListaAntecedentes = () => {
             />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">Enviar</Button>
+            <Button type="primary" htmlType="submit">
+              Enviar
+            </Button>
           </Form.Item>
         </Form>
       </Modal>

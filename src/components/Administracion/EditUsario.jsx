@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-duplicate-props */
+
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import Header from "../Header";
@@ -144,6 +144,7 @@ const EditUsuario = () => {
   useEffect(() => {
     getData();
     getUserInfo();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

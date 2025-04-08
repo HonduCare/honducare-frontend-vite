@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { StrictMode } from 'react';
+import { UserProvider } from './components/Helpers/userContext.jsx';
 
 // Enrutador personalizado
 import Approuter from "./approuter.jsx"
@@ -19,6 +20,8 @@ import '../node_modules/bootstrap/dist/js/bootstrap.bundle.js';
 // Renderizar la app
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Approuter />
+     <UserProvider>
+      <Approuter />
+    </UserProvider>
   </StrictMode>
 );

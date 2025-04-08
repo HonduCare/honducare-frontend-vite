@@ -11,23 +11,18 @@ import {
   patients,
   dep_icon1,
   dep_icon2,
-  dep_icon3,
-  dep_icon4,
-  dep_icon5,
   profile_add,
   user001,
 } from "../../imagepath";
 import { Link } from "react-router-dom";
 import CountUp from "react-countup";
 import axios from "axios";
-import { label } from "yet-another-react-lightbox";
 
 const Admin_Dashboard = () => {
   const [selectedOption, setSelectedOption] = useState({
     value: 2025,
     label: "2025",
   });
-  // eslint-disable-next-line no-unused-vars
   const YEAR = [
     { value: 2024, label: "2024" },
     { value: 2025, label: "2025" },

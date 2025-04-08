@@ -1,25 +1,34 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../Helpers/userContext";
 import { Table } from "antd";
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import { onShowSizeChange, itemRender } from '../Pagination'
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import { onShowSizeChange, itemRender } from "../Pagination";
 import {
-  blogimg10, imagesend, pdficon, pdficon3, pdficon4, plusicon, refreshicon, searchnormal, blogimg12,
-  blogimg2, blogimg4, blogimg6, blogimg8
-} from '../imagepath';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+  imagesend,
+  pdficon,
+  pdficon3,
+  pdficon4,
+  plusicon,
+  refreshicon,
+  searchnormal,
+} from "../imagepath";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
-
+import { use } from "react";
 
 const suariolist = () => {
+  const { usuarioLogged } = useContext(UserContext);
+ 
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
   const [usuarioEliminar, setUsuarioEliminar] = useState({});
@@ -47,13 +56,15 @@ const suariolist = () => {
 
   // Buscar el usuario por nombre
   async function onSearchUsuario() {
-    if (searchValue === '') {
+    if (searchValue === "") {
       setUsuariosFiltrados([]);
       getUsers();
       return;
     }
 
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/buscar-nombre?nombre=${searchValue}`;
+    const url = `${
+      import.meta.env.VITE_REACT_APP_API_URL
+    }/obtener/buscar-nombre?nombre=${searchValue}`;
     try {
       const { data } = await axios.get(url);
       setUsuariosFiltrados(data);
@@ -66,13 +77,15 @@ const suariolist = () => {
   function onRefresh() {
     setUsuarios([]);
     setUsuariosFiltrados([]);
-    setSearchValue('');
+    setSearchValue("");
     getUsers();
   }
 
   // Funcion para eliminar un usuario
   async function onDeleteUsuario() {
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/eliminar-usuario/${usuarioEliminar.id_usuario}`;
+    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/eliminar-usuario/${
+      usuarioEliminar.id_usuario
+    }`;
     try {
       const { data } = await axios.delete(url);
       Swal.fire({
@@ -81,10 +94,9 @@ const suariolist = () => {
         text: `Se elimino el usuario ${usuarioEliminar.nombre_de_usuario} correctamente.`,
         showConfirmButton: true,
         timer: 3000,
-        confirmButtonText: 'Aceptar',
+        confirmButtonText: "Aceptar",
       });
-      navigate('/Usuariolista');
-
+      navigate("/Usuariolista");
     } catch (error) {
       console.log(error.response.data);
       Swal.fire({
@@ -93,7 +105,7 @@ const suariolist = () => {
         text: `No se elimino el usuario ${usuarioEliminar.nombre_de_usuario} debido a que tiene transaccciones pendientes por realizar.`,
         showConfirmButton: true,
         timer: 6000,
-        confirmButtonText: 'Aceptar',
+        confirmButtonText: "Aceptar",
       });
     }
   }
@@ -109,9 +121,7 @@ const suariolist = () => {
       dataIndex: "nombre",
       sorter: (a, b) => a.nombre.length - b.nombre.length,
       render: (text, record) => (
-        <p className="profile-image">
-          {record.nombre_de_usuario}
-        </p>
+        <p className="profile-image">{record.nombre_de_usuario}</p>
       ),
     },
     {
@@ -119,28 +129,29 @@ const suariolist = () => {
       dataIndex: "tipo_doc",
       sorter: (a, b) => a.tipo_doc.length - b.tipo_doc.length,
       render: (text, record) => (
-        <h2 className="profile-image">
-          {record.numero_identidad}
-        </h2>
+        <h2 className="profile-image">{record.numero_identidad}</h2>
       ),
     },
-    {/*
+    {
+      /*
             title:"Edad",
             dataIndex: "edad",
                 sorter: (a, b) => a.edad.length - b.edad.length,
-        */},
-    {/*
+        */
+    },
+    {
+      /*
             title:"Sexo",
             dataIndex: "sexo",
                 sorter: (a, b) => a.sexo.length - b.sexo.length
-        */}, {
+        */
+    },
+    {
       title: "Correo Electronico",
       dataIndex: "correo",
       sorter: (a, b) => a.correo.length - b.correo.length,
       render: (text, record) => (
-        <h2 className="profile-image">
-          {record.correo_electronico}
-        </h2>
+        <h2 className="profile-image">{record.correo_electronico}</h2>
       ),
     },
     {
@@ -148,49 +159,76 @@ const suariolist = () => {
       dataIndex: "estado",
       sorter: (a, b) => a.correo.length - b.correo.length,
       render: (text, record) => (
-        <h2 className="profile-image">
-          {record.estado.toUpperCase()}
-        </h2>
+        <h2 className="profile-image">{record.estado.toUpperCase()}</h2>
       ),
     },
     {
       title: "",
       dataIndex: "FIELD8",
-      render: (text, record) => (
-        <>
-          <div className="text-end">
-            <div className="dropdown dropdown-action">
-              <Link
-                to="#"
-                className="action-icon dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <i className="fas fa-ellipsis-v" />
-              </Link>
-              <div className="dropdown-menu dropdown-menu-end">
-                <Link className="dropdown-item" to={`/EditUsuario/${record.id_usuario}`}>
-                  <i className="far fa-edit me-2" />
-                  Editar
-                </Link>
-
-                <Link onClick={() => setUsuarioEliminar(record)} className="dropdown-item" to="#" data-bs-toggle="modal" data-bs-target="#delete_patient">
-                  <i className="fa fa-trash-alt m-r-5"></i> Eliminar
-                </Link>
+      render: (text, record) => {
+        const hasUpdateOrDeletePermission = usuarioLogged?.rol?.permisos.some(
+          (permiso) => permiso.nombre === "actualizar" || permiso.nombre === "eliminar"
+        );
+      
+        return (
+          <>
+            {hasUpdateOrDeletePermission && (
+              <div className="text-end">
+                <div className="dropdown dropdown-action">
+                  <Link
+                    to="#"
+                    className="action-icon dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="fas fa-ellipsis-v" />
+                  </Link>
+                  <div className="dropdown-menu dropdown-menu-end">
+                    {/* Verificar si el usuario tiene el permiso "actualizar" */}
+                    {usuarioLogged?.rol?.permisos.some(
+                      (permiso) => permiso.nombre === "actualizar"
+                    ) && (
+                      <Link
+                        className="dropdown-item"
+                        to={`/EditUsuario/${record.id_usuario}`}
+                      >
+                        <i className="far fa-edit me-2" />
+                        Editar
+                      </Link>
+                    )}
+      
+                    {/* Verificar si el usuario tiene el permiso "eliminar" */}
+                    {usuarioLogged?.rol?.permisos.some(
+                      (permiso) => permiso.nombre === "eliminar"
+                    ) && (
+                      <Link
+                        onClick={() => setUsuarioEliminar(record)}
+                        className="dropdown-item"
+                        to="#"
+                        data-bs-toggle="modal"
+                        data-bs-target="#delete_patient"
+                      >
+                        <i className="fa fa-trash-alt m-r-5"></i> Eliminar
+                      </Link>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </>
-      ),
+            )}
+          </>
+        );
+      },
     },
-
-  ]
-
+  ];
 
   return (
     <>
       <Header />
-      <Sidebar id='menu-item1' id1='menu-items1' activeClassName='usuario-list' />
+      <Sidebar
+        id="menu-item1"
+        id1="menu-items1"
+        activeClassName="usuario-list"
+      />
       <div className="page-wrapper">
         <div className="content">
           {/* Page Header */}
@@ -230,18 +268,17 @@ const suariolist = () => {
                                   className="form-control"
                                   placeholder="Buscar usuario por nombre"
                                   value={searchValue}
-                                  onChange={e => setSearchValue(e.target.value)}
-                                  onInput={e => {
+                                  onChange={(e) =>
+                                    setSearchValue(e.target.value)
+                                  }
+                                  onInput={(e) => {
                                     setTimeout(() => {
                                       onSearchUsuario();
                                     }, 2000);
                                   }}
                                 />
                                 <Link className="btn">
-                                  <img
-                                    src={searchnormal}
-                                    alt="#"
-                                  />
+                                  <img src={searchnormal} alt="#" />
                                 </Link>
                               </form>
                             </div>
@@ -250,12 +287,11 @@ const suariolist = () => {
                                 to="/AgregarUsuario"
                                 className="btn btn-primary add-pluss ms-2"
                               >
-
                                 <img src={plusicon} alt="#" />
                               </Link>
                               <button
                                 className="btn btn-primary doctor-refresh ms-2"
-                                type='button'
+                                type="button"
                                 onClick={onRefresh}
                               >
                                 <img src={refreshicon} alt="#" />
@@ -268,8 +304,7 @@ const suariolist = () => {
                         <Link to="#" className=" me-2">
                           <img src={pdficon} alt="#" />
                         </Link>
-                        <Link to="#" className=" me-2">
-                        </Link>
+                        <Link to="#" className=" me-2"></Link>
                         <Link to="#" className=" me-2">
                           <img src={pdficon3} alt="#" />
                         </Link>
@@ -291,7 +326,11 @@ const suariolist = () => {
                         itemRender: itemRender,
                       }}
                       columns={columns}
-                      dataSource={usuariosFiltrados.length > 0 ? usuariosFiltrados : usuarios}
+                      dataSource={
+                        usuariosFiltrados.length > 0
+                          ? usuariosFiltrados
+                          : usuarios
+                      }
                       // rowSelection={rowSelection}
                       rowKey={(record) => record.id_usuario}
                     />
@@ -301,9 +340,12 @@ const suariolist = () => {
             </div>
           </div>
         </div>
-
       </div>
-      <div id="delete_patient" className="modal fade delete-modal" role="dialog">
+      <div
+        id="delete_patient"
+        className="modal fade delete-modal"
+        role="dialog"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-body text-center">
@@ -311,10 +353,18 @@ const suariolist = () => {
               <h3>¿Seguro que quieres eliminarlo?</h3>
               <div className="m-t-20">
                 {" "}
-                <button type='button' className="btn btn-white me-2" data-bs-dismiss="modal">
+                <button
+                  type="button"
+                  className="btn btn-white me-2"
+                  data-bs-dismiss="modal"
+                >
                   Cerrar
                 </button>
-                <button type='button' onClick={onDeleteUsuario} className="btn btn-danger">
+                <button
+                  type="button"
+                  onClick={onDeleteUsuario}
+                  className="btn btn-danger"
+                >
                   Eliminar
                 </button>
               </div>
@@ -323,8 +373,7 @@ const suariolist = () => {
         </div>
       </div>
     </>
-
-  )
-}
+  );
+};
 
 export default suariolist;

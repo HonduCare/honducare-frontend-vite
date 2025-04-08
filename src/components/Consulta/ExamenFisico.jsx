@@ -1,36 +1,43 @@
-/* eslint-disable react/jsx-no-duplicate-props */
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../Helpers/userContext.jsx";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
-import Select from "react-select";
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-import createAuthHeaders from '../../helpers/createAuthHeaders.js';
+import createAuthHeaders from "../../helpers/createAuthHeaders.js";
 
 const ExamenFisico = () => {
+  const { usuarioLogged } = useContext(UserContext);
   const navigate = useNavigate();
   const params = useParams();
 
-  const [nombre, setNombre] = useState('')
-  const [identidad, setIdentidad] = useState('');
-  const [edad, setEdad] = useState('');
-  const [presion, setPresion] = useState('');
-  const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState('');
-  const [frecuenciaRespiratoria, setFrecuenciaRespiratoria] = useState('');
-  const [temperatura, setTemperatura] = useState('');
-  const [peso, setPeso] = useState('');
-  const [talla, setTalla] = useState('');
-  const [glucometria, setGlucometria] = useState('');
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
-
+  const [nombre, setNombre] = useState("");
+  const [identidad, setIdentidad] = useState("");
+  const [edad, setEdad] = useState("");
+  const [presion, setPresion] = useState("");
+  const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState("");
+  const [frecuenciaRespiratoria, setFrecuenciaRespiratoria] = useState("");
+  const [temperatura, setTemperatura] = useState("");
+  const [peso, setPeso] = useState("");
+  const [talla, setTalla] = useState("");
+  const [glucometria, setGlucometria] = useState("");
+  const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
   async function handleSave() {
-
-    if ([presion, frecuenciaCardiaca, frecuenciaRespiratoria, temperatura, peso, talla].some(p => p <= 0)) {
+    if (
+      [
+        presion,
+        frecuenciaCardiaca,
+        frecuenciaRespiratoria,
+        temperatura,
+        peso,
+        talla,
+      ].some((p) => p <= 0)
+    ) {
       Swal.fire({
         icon: "warning",
         text: "Debe de especificar valores mayores a 0",
@@ -40,7 +47,18 @@ const ExamenFisico = () => {
       return;
     }
 
-    console.log({ nombre, identidad, edad, presion, frecuenciaCardiaca, frecuenciaRespiratoria, temperatura, peso, talla, glucometria });
+    console.log({
+      nombre,
+      identidad,
+      edad,
+      presion,
+      frecuenciaCardiaca,
+      frecuenciaRespiratoria,
+      temperatura,
+      peso,
+      talla,
+      glucometria,
+    });
 
     try {
       const url = `${import.meta.env.VITE_REACT_APP_API_URL}/crear/preclinica`;
@@ -57,7 +75,7 @@ const ExamenFisico = () => {
         peso_actual: peso,
         talla,
         glucometria,
-      }
+      };
 
       const { data } = await axios.post(url, body, config);
       console.log(data);
@@ -69,30 +87,28 @@ const ExamenFisico = () => {
       }).then(() => {
         navigate("/PreclinicaLista");
       });
-
     } catch (error) {
       console.log(error);
     }
-
-  };
+  }
 
   async function getPaciente() {
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${params.id_paciente}`;
+    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${
+      params.id_paciente
+    }`;
 
     try {
       const { data } = await axios(url);
-      // console.log(data);
       setNombre(data.nombre_completo);
       setIdentidad(data.numero_identidad);
-      setEdad(data.edad ? data.edad : 'No definida');
+      setEdad(data.edad ? data.edad : "No definida");
     } catch (error) {
       console.log(error);
     }
-
   }
 
   function onCancel() {
-    navigate('/PreclinicaLista');
+    navigate("/PreclinicaLista");
   }
 
   useEffect(() => {
@@ -102,7 +118,11 @@ const ExamenFisico = () => {
   return (
     <div>
       <Header />
-      <Sidebar id='menu-item6' id1='menu-items6' activeClassName='examenfisico-list' />
+      <Sidebar
+        id="menu-item6"
+        id1="menu-items6"
+        activeClassName="examenfisico-list"
+      />
       <>
         <div className="page-wrapper">
           <div className="content">
@@ -186,35 +206,42 @@ const ExamenFisico = () => {
                         <div className="col-12 col-md-6 col-xl-4">
                           <div className="form-group local-forms">
                             <label>
-                              Presión Arterial<span className="login-danger">*</span>
+                              Presión Arterial
+                              <span className="login-danger">*</span>
                             </label>
                             <input
                               className="form-control"
                               type="number"
                               placeholder="Presion arterial"
                               value={presion}
-                              onChange={e => setPresion(Number(e.target.value))}
+                              onChange={(e) =>
+                                setPresion(Number(e.target.value))
+                              }
                             />
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-4">
                           <div className="form-group local-forms">
                             <label>
-                              Frecuencia cardiaca <span className="login-danger">*</span>
+                              Frecuencia cardiaca{" "}
+                              <span className="login-danger">*</span>
                             </label>
                             <input
                               className="form-control"
                               type="number"
                               placeholder="Frecuencia cardiaca"
                               value={frecuenciaCardiaca}
-                              onChange={e => setFrecuenciaCardiaca(Number(e.target.value))}
+                              onChange={(e) =>
+                                setFrecuenciaCardiaca(Number(e.target.value))
+                              }
                             />
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-4">
                           <div className="form-group local-forms">
                             <label>
-                              Frecuencia Respiratoria <span className="login-danger">*</span>
+                              Frecuencia Respiratoria{" "}
+                              <span className="login-danger">*</span>
                             </label>
                             <input
                               className="form-control"
@@ -223,7 +250,11 @@ const ExamenFisico = () => {
                               max={100}
                               placeholder="Frecuencia respiratoria"
                               value={frecuenciaRespiratoria}
-                              onChange={e => setFrecuenciaRespiratoria(Number(e.target.value))}
+                              onChange={(e) =>
+                                setFrecuenciaRespiratoria(
+                                  Number(e.target.value)
+                                )
+                              }
                             />
                           </div>
                         </div>
@@ -240,7 +271,9 @@ const ExamenFisico = () => {
                               max={100}
                               placeholder=""
                               value={temperatura}
-                              onChange={e => setTemperatura(Number(e.target.value))}
+                              onChange={(e) =>
+                                setTemperatura(Number(e.target.value))
+                              }
                             />
                           </div>
                         </div>
@@ -255,7 +288,7 @@ const ExamenFisico = () => {
                               min={0}
                               max={100}
                               value={peso}
-                              onChange={e => setPeso(Number(e.target.value))}
+                              onChange={(e) => setPeso(Number(e.target.value))}
                             />
                           </div>
                         </div>
@@ -270,14 +303,15 @@ const ExamenFisico = () => {
                               min={0}
                               max={100}
                               value={talla}
-                              onChange={e => setTalla(Number(e.target.value))}
+                              onChange={(e) => setTalla(Number(e.target.value))}
                             />
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-2">
                           <div className="form-group local-forms">
                             <label>
-                              Glucometria <span className="login-danger">*</span>
+                              Glucometria{" "}
+                              <span className="login-danger">*</span>
                             </label>
                             <input
                               className="form-control"
@@ -285,43 +319,28 @@ const ExamenFisico = () => {
                               min={0}
                               max={100}
                               value={glucometria}
-                              onChange={e => setGlucometria(Number(e.target.value))}
+                              onChange={(e) =>
+                                setGlucometria(Number(e.target.value))
+                              }
                             />
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-6 col-xl-4 ">
-
-                          {/* <div className="form-group local-forms settings-label">
-                              <label >
-                                Examenes de laboratorio <span className="login-danger">*</span>
-                              </label >
-                              <div className="settings-btn">
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  name="image"
-                                  id="file"
-                                  className="hide-input"
-                                />
-                                <label htmlFor="file" className="upload">
-                                  <i className="feather-upload">
-                                    <FeatherIcon icon="upload" />
-                                  </i>
-                                </label>
-                              </div>
-                            </div> */}
-                        </div>
-
                         <div className="col-12">
                           <div className="doctor-submit text-end">
-                            <button
-                              type="button"
-                              className="btn btn-primary submit-form me-2"
-                              onClick={handleSave}
-                            >
-                              Guardar
-                            </button>
+                            {usuarioLogged?.rol?.permisos.some(
+                              (permiso) =>
+                                permiso.nombre === "registrar" ||
+                                permiso.nombre === "actualizar"
+                            ) && (
+                              <button
+                                type="button"
+                                className="btn btn-primary submit-form me-2"
+                                onClick={handleSave}
+                              >
+                                Guardar
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="btn btn-primary cancel-form"

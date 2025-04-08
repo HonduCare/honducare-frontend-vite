@@ -6,10 +6,7 @@ import {
   baricon,
   baricon1,
   searchnormal,
-  imguser,
-  user06,
-  settingicon01,
-  noteicon1, // Asegúrate de incluir esta línea para importar noteicon1
+  user06
 } from "./imagepath";
 
 import axios from 'axios';

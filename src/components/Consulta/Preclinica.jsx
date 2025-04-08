@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../Helpers/userContext";
 import axios from "axios"; // Importamos axios para hacer la petición
 import Header from "../Header";
 import Sidebar from "../Sidebar";
@@ -7,21 +9,24 @@ import { Table } from "antd";
 import { onShowSizeChange, itemRender } from "../Pagination";
 import { pdficon } from "../imagepath";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import { formatearFecha, formatearHora } from '../../helpers';
+import { formatearFecha, formatearHora } from "../../helpers";
 
 const Preclinica = () => {
-  const navigate = useNavigate(); // Hook for navigation
-  const [datasource, setDatasource] = useState([]); // Estado para guardar los datos de los pacientes
-  const [mensaje, setMensaje] = useState('')
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
-  // Función para cargar los datos desde el backend usando Axios
+  const { usuarioLogged } = useContext(UserContext);
+  const navigate = useNavigate();
+  const [datasource, setDatasource] = useState([]);
+  const [mensaje, setMensaje] = useState("");
+  const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
+
   const fetchData = async () => {
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/hoy/today`); // Ruta de tu API
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/hoy/today`
+      ); // Ruta de tu API
       console.log(data);
-      setMensaje('');
+      setMensaje("");
       if (data.mensaje) {
         setMensaje(mensaje);
         return;
@@ -32,10 +37,9 @@ const Preclinica = () => {
     }
   };
 
-  // Llamar a la función fetchData cuando se monta el componente
   useEffect(() => {
     fetchData();
-  }, []); // El array vacío significa que se ejecutará solo una vez al montar el componente
+  }, []);
 
   const columns = [
     {
@@ -73,7 +77,9 @@ const Preclinica = () => {
       sorter: (a, b) => a.fecha.length - b.fecha.length,
       render: (text, record) => (
         <h2 className="profile-image">
-          <Link to="#">{formatearFecha(record.fecha, 'long').split(' ')[0].toUpperCase()}</Link>
+          <Link to="#">
+            {formatearFecha(record.fecha, "long").split(" ")[0].toUpperCase()}
+          </Link>
         </h2>
       ),
     },
@@ -88,7 +94,7 @@ const Preclinica = () => {
       ),
     },
     {
-      title: 'Estado de la cita',
+      title: "Estado de la cita",
       render: (text, record) => (
         <div className="d-flex align-items-center">
           <div>
@@ -109,13 +115,23 @@ const Preclinica = () => {
             )}
           </div>
           <div className="ms-3">
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={() => navigate(`/examenfisico/${record.id_cita}/${record.paciente.id_paciente}`)}
-            >
-              Registro de Preclínica
-            </button>
+            {usuarioLogged?.rol?.permisos.some(
+              (permiso) =>
+                permiso.nombre === "registrar" ||
+                permiso.nombre === "actualizar"
+            ) && (
+              <button
+                type="button"
+                className="btn btn-primary btn-sm"
+                onClick={() =>
+                  navigate(
+                    `/examenfisico/${record.id_cita}/${record.paciente.id_paciente}`
+                  )
+                }
+              >
+                Registro de Preclínica
+              </button>
+            )}
           </div>
         </div>
       ),
@@ -125,7 +141,11 @@ const Preclinica = () => {
   return (
     <div>
       <Header />
-      <Sidebar id='menu-item5' id1='menu-items5' activeClassName='preclinica-list' />
+      <Sidebar
+        id="menu-item5"
+        id1="menu-items5"
+        activeClassName="preclinica-list"
+      />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -163,7 +183,9 @@ const Preclinica = () => {
                       </div>
                     </div>
                   </div>
-                  {mensaje ? <p className="text-center fw-bold">{mensaje}</p> : (
+                  {mensaje ? (
+                    <p className="text-center fw-bold">{mensaje}</p>
+                  ) : (
                     <div className="table-responsive">
                       <Table
                         pagination={{
@@ -191,5 +213,3 @@ const Preclinica = () => {
 };
 
 export default Preclinica;
-
-

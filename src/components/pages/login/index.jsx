@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { EyeOff, Eye } from "react-feather";
 import { login02, loginlogo } from "../../imagepath";
 import { auth } from "../../../FirebaseConfig.js";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword,getIdToken } from "firebase/auth";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -22,10 +22,17 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const token = await getIdToken(user);
       const response = await axios.post(
         `${import.meta.env.VITE_REACT_APP_API_URL}/Verificar`,
-        { email }
+        { email },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.autenticated) {
         localStorage.setItem("user", JSON.stringify(response.data.data));

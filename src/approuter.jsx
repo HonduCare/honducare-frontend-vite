@@ -87,6 +87,8 @@ import ConsultaExpediente from "./components/Consulta/ConsultaExpediente";
 import ComoSeEntero from "./components/patients/ComoSeEntero";
 import ConsultaItinerario from "./components/patients/ConsultaItinerario";
 
+//COMPONENTE DE PERMISOS
+import { AdministrarPermisos } from "./components/Administracion/AdministrarPermisos";
 
 //Accounts
 const Approuter = () => {
@@ -203,6 +205,7 @@ const Approuter = () => {
               <Route path="/como-se-entero" element={<ComoSeEntero />} />
               <Route path="/consulta-itinerario" element={<ConsultaItinerario />} />
               <Route path="/consulta-expediente" element={<ConsultaExpediente />} />
+              <Route path="/permisos-roles" element={<AdministrarPermisos/>} />
             </Route>
           ) : null}
 

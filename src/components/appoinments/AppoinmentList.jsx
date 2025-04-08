@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../Helpers/userContext";
 import { Table } from "antd";
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import {
-  blogimg10, searchnormal, plusicon, refreshicon
-} from '../imagepath';
-import { onShowSizeChange, itemRender } from '../Pagination';
-import { Link, useNavigate } from 'react-router-dom';
-import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
-import axios from 'axios';  // Asegúrate de haber instalado axios
-import Swal from 'sweetalert2';
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import { searchnormal, plusicon } from "../imagepath";
+import { onShowSizeChange, itemRender } from "../Pagination";
+import { Link } from "react-router-dom";
+import FeatherIcon from "feather-icons-react/build/FeatherIcon";
+import axios from "axios"; // Asegúrate de haber instalado axios
+import Swal from "sweetalert2";
 
-import { formatearFecha, formatearHora } from '../../helpers';
+import { formatearFecha, formatearHora } from "../../helpers";
 
 const AppoinmentList = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const { usuarioLogged } = useContext(UserContext);
+  //const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [datasource, setDatasource] = useState([]);
   const [idCitaAEliminar, setIdCitaAEliminar] = useState(null);
   const [search, setSearch] = useState("");
@@ -22,27 +22,32 @@ const AppoinmentList = () => {
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
 
-  const onSelectChange = (newSelectedRowKeys) => {
+  {
+    /* const onSelectChange = (newSelectedRowKeys) => {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
-  };
+  };*/
+  }
 
-  const rowSelection = {
+  {
+    /*  const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-  };
+  };*/
+  }
 
   function buscarCitaNombre() {
-    if (search == '') {
+    if (search == "") {
       setCitasFiltradas([]);
       obtenerCita();
       return;
     }
 
-    const filtroCitasNombre = datasource.filter(cita => cita.paciente.nombre_completo.toLowerCase().includes(search.toLowerCase()));
+    const filtroCitasNombre = datasource.filter((cita) =>
+      cita.paciente.nombre_completo.toLowerCase().includes(search.toLowerCase())
+    );
     setCitasFiltradas(filtroCitasNombre);
   }
-
 
   const columns = [
     {
@@ -120,66 +125,92 @@ const AppoinmentList = () => {
     {
       title: "",
       dataIndex: "FIELD8",
-      render: (text, record) => (
-        <div className="text-end">
-          <div className="dropdown dropdown-action">
-            <Link
-              to="#"
-              className="action-icon dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i className="fas fa-ellipsis-v" />
-            </Link>
-            <div className="dropdown-menu dropdown-menu-end">
-              <Link className="dropdown-item" to={`/EditCita/${record.id_cita}`}>
-                <i className="far fa-edit me-2" />
-                Editar
-              </Link>
-              <button
-                className="dropdown-item"
+      render: (text, record) => {
+        const hasUpdatePermission = usuarioLogged?.rol?.permisos.some(
+          (permiso) => permiso.nombre === "actualizar"
+        );
+        const hasDeletePermission = usuarioLogged?.rol?.permisos.some(
+          (permiso) => permiso.nombre === "eliminar"
+        );
+      
+        // Si no tiene permisos, no renderizar nada
+        if (!hasUpdatePermission && !hasDeletePermission) {
+          return null;
+        }
+      
+        return (
+          <div className="text-end">
+            <div className="dropdown dropdown-action">
+              <Link
                 to="#"
-                onClick={() => {
-                  setIdCitaAEliminar(record.id_cita);
-                  console.log(idCitaAEliminar);
-                  Swal.fire({
-                    title: 'Cancelar cita',
-                    input: 'textarea',
-                    inputAttributes: {
-                      placeholder: 'Ingrese el motivo por el cual cancelara la cita',
-                    },
-                    showCancelButton: true,
-                    confirmButtonText: "Cancelar Cita",
-                    cancelButtonText: 'Regresar',
-                    showLoaderOnConfirm: true,
-                    preConfirm: async (motivo) => {
-                      try {
-                        const url = `${import.meta.env.VITE_REACT_APP_API_URL}/actualizar/cita/cancelar/${idCitaAEliminar}`;
-                        const { data } = await axios.put(url, { motivo_cancelacion: motivo });
-                        if (!data) {
-                          return Swal.showValidationMessage(`
-                            No hay data
-                          `);
-                        }
-                      } catch (error) {
-                        Swal.showValidationMessage(`
-                          Error: ${error.response.data.mensaje}
-                        `);
-                      }
-                    },
-                  }).then((result) => {
-                    if (result.isConfirmed) {
-                      obtenerCita();
-                    }
-                  });
-                }}
+                className="action-icon dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-                <i className="fa fa-trash-alt m-r-5"></i> Cancelar Cita
-              </button>
+                <i className="fas fa-ellipsis-v" />
+              </Link>
+              <div className="dropdown-menu dropdown-menu-end">
+                {/* Mostrar opción "Editar" si el usuario tiene permiso "actualizar" */}
+                {hasUpdatePermission && (
+                  <Link
+                    className="dropdown-item"
+                    to={`/EditCita/${record.id_cita}`}
+                  >
+                    <i className="far fa-edit me-2" />
+                    Editar
+                  </Link>
+                )}
+      
+                {/* Mostrar opción "Cancelar Cita" si el usuario tiene permiso "eliminar" */}
+                {hasDeletePermission && (
+                  <button
+                    className="dropdown-item"
+                    to="#"
+                    onClick={() => {
+                      setIdCitaAEliminar(record.id_cita);
+                      Swal.fire({
+                        title: "Cancelar cita",
+                        input: "textarea",
+                        inputAttributes: {
+                          placeholder:
+                            "Ingrese el motivo por el cual cancelará la cita",
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: "Cancelar Cita",
+                        cancelButtonText: "Regresar",
+                        showLoaderOnConfirm: true,
+                        preConfirm: async (motivo) => {
+                          try {
+                            const url = `${
+                              import.meta.env.VITE_REACT_APP_API_URL
+                            }/actualizar/cita/cancelar/${idCitaAEliminar}`;
+                            const { data } = await axios.put(url, {
+                              motivo_cancelacion: motivo,
+                            });
+                            if (!data) {
+                              return Swal.showValidationMessage(`No hay data`);
+                            }
+                          } catch (error) {
+                            Swal.showValidationMessage(
+                              `Error: ${error.response.data.mensaje}`
+                            );
+                          }
+                        },
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          obtenerCita();
+                        }
+                      });
+                    }}
+                  >
+                    <i className="fa fa-trash-alt m-r-5"></i> Cancelar Cita
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -188,54 +219,63 @@ const AppoinmentList = () => {
     if (!idCitaAEliminar) return;
 
     try {
-      const url = `${import.meta.env.VITE_REACT_APP_API_URL}/eliminar/cita/${idCitaAEliminar}`;
+      const url = `${
+        import.meta.env.VITE_REACT_APP_API_URL
+      }/eliminar/cita/${idCitaAEliminar}`;
       const response = await axios.delete(url);
 
-      if (response.data.mensaje === 'Cita eliminada exitosamente') {
+      if (response.data.mensaje === "Cita eliminada exitosamente") {
         Swal.fire({
-          icon: 'success',
-          title: '¡Cita eliminada con éxito!',
+          icon: "success",
+          title: "¡Cita eliminada con éxito!",
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
           // Elimina la cita de la lista localmente
-          setDatasource(prevDatasource => prevDatasource.filter(cita => cita.id_cita !== idCitaAEliminar));
+          setDatasource((prevDatasource) =>
+            prevDatasource.filter((cita) => cita.id_cita !== idCitaAEliminar)
+          );
         });
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.mensaje || 'Hubo un problema al eliminar la cita',
+          icon: "error",
+          title: "Error",
+          text: response.data.mensaje || "Hubo un problema al eliminar la cita",
         });
       }
     } catch (error) {
-      console.error('Error al eliminar la cita:', error);
+      console.error("Error al eliminar la cita:", error);
       Swal.fire({
-        icon: 'error',
-        title: 'Error al eliminar la cita',
-        text: 'Hubo un problema al procesar tu solicitud. Intenta de nuevo.',
+        icon: "error",
+        title: "Error al eliminar la cita",
+        text: "Hubo un problema al procesar tu solicitud. Intenta de nuevo.",
       });
     }
   };
 
   async function obtenerCita() {
     try {
-      const { data } = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/citas`);
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/citas`
+      );
       setDatasource(data);
     } catch (error) {
       console.error("Error al obtener las citas:", error);
     }
-  };
+  }
 
   useEffect(() => {
     obtenerCita();
   }, []);
 
-
   return (
     <>
       <Header />
-      <Sidebar id="menu-item4" id1="menu-items4" activeClassName="appoinment-list" />
+      <Sidebar
+        id="menu-item4"
+        id1="menu-items4"
+        activeClassName="appoinment-list"
+      />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -282,9 +322,16 @@ const AppoinmentList = () => {
                               </form>
                             </div>
                             <div className="add-group">
-                              <Link to="/AgregarCita" className="btn btn-primary add-pluss ms-2">
-                                <img src={plusicon} alt="#" />
-                              </Link>
+                              {usuarioLogged?.rol?.permisos.some(
+                                (permiso) => permiso.nombre === "registrar"
+                              ) && (
+                                <Link
+                                  to="/AgregarCita"
+                                  className="btn btn-primary add-pluss ms-2"
+                                >
+                                  <img src={plusicon} alt="#" />
+                                </Link>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -306,7 +353,11 @@ const AppoinmentList = () => {
                           itemRender: itemRender,
                         }}
                         columns={columns}
-                        dataSource={citasFiltradas.length > 0 ? citasFiltradas : datasource}
+                        dataSource={
+                          citasFiltradas.length > 0
+                            ? citasFiltradas
+                            : datasource
+                        }
                         //rowSelection={rowSelection}
                         rowKey={(record) => record.id_cita}
                       />

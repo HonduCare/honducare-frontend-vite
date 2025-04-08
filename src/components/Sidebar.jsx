@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { dashboard, doctor, doctorschedule, logout, menuicon04, menuicon06, menuicon08, menuicon09, menuicon10, menuicon11, menuicon12, menuicon14, menuicon15, menuicon16, patients, sidemenu } from './imagepath';
@@ -96,14 +96,14 @@ const Sidebar = (props) => {
                       <span> Administración </span> <span className="menu-arrow" />
                     </Link>
                     <ul style={{ display: sidebar === 'Administración' ? 'block' : 'none' }} className="menu-items1">
-                      {/* <li>
-                        <Link className={props?.activeClassName === 'RolesPermisos' ? 'active' : ''} to="/RolesPermisos">Gestion de Roles</Link>
-                      </li> */}
                       <li>
                         <Link className={props?.activeClassName === 'usuario-list' ? 'active' : ''} to="/Usuariolista">Gestion de Usuarios</Link>
                       </li>
                       <li>
                         <Link className={props?.activeClassName === 'Bitacora' ? 'active' : ''} to="/Bitacora">Bitacora</Link>
+                      </li>
+                      <li>
+                        <Link className={props?.activeClassName === 'Permisos-roles' ? 'active' : ''} to="/permisos-roles">Permisos Roles</Link>
                       </li>
                     </ul>
                   </li>

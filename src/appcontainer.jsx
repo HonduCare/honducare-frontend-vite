@@ -1,24 +1,18 @@
-/* eslint-disable react/jsx-no-undef */
-/* eslint-disable no-unused-vars */
-import React, { Component } from "react";
-import config from "config";
 
-import { Route, Redirect, BrowserRouter as Router, Routes } from "react-router-dom";
+import React from "react";
+
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 // import Header from "./components/header";
 import Home from "./components/home";
 import Login from "./components/pages/login";
 
 
-const AppContainer = function (props) {
-
-
+const AppContainer = function () {
   return (
     <Router basename= "/react/template">
       <>
         <Route render={(props) => <Header {...props} />} />
         <Routes>
-
-          {/* <Route index element={<Login />} /> */}
           <Route  path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route  path="/home" component={Home} />

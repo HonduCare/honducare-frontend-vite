@@ -23,7 +23,7 @@ const AddAppoinments = () => {
   const [telefono, setTelefono] = useState("");
   const [numeroIdentidad, setNumeroIdentidad] = useState("");
   const [motivoConsulta, setMotivoConsulta] = useState("");
-  const [especialidadDoctor, setEspecialidadDoctor] = useState('');
+  //const [especialidadDoctor, setEspecialidadDoctor] = useState('');
   const [fecha, setFecha] = useState(null);
   const [disabedNombreTelefono, setDisabedNombreTelefono] = useState(true);
 
