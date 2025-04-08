@@ -1,28 +1,20 @@
+import { getToken } from "../components/Helpers/getToken.helper";
 
-/**
- * Crea encabezados de autenticación para una solicitud HTTP.
- * Obtiene un token de autenticación almacenado y lo utiliza para
- * configurar el encabezado `Authorization` con formato Bearer.
- *
- * @async
- * @function createAuthHeaders
- * @returns {Promise<Object>} Un objeto con la propiedad `headers`, 
- * donde `Authorization` contiene el token en formato Bearer.
- *
- * @example
- * const headers = await createAuthHeaders();
- * fetch('https://api.example.com/data', { method: 'GET', ...headers });
- */
+async function createAuthHeaders() {
+  try {
+    // Obtener el token directamente desde Firebase
+    const token = await getToken();
+    console.log("Token obtenido:", token);
 
-function createAuthHeaders() {
-  // Obtener el token de autenticación almacenado en storage del dispositivo.
-  const token = localStorage.getItem('token');
-
-  // Retorna el objeto con el encabezado de autenticación
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    }
+    // Retorna el objeto con el encabezado de autenticación
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    };
+  } catch (error) {
+    console.error("Error al obtener el token:", error);
+    throw new Error("No se pudo crear el encabezado de autenticación.");
   }
 }
 

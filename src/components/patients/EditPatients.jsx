@@ -1,40 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import { DatePicker } from "antd";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import Select from "react-select";
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from "axios";
-import moment from 'moment';
-import { ViewAgendaOutlined } from "@mui/icons-material";
-import { removeComillas } from "../../helpers";
+import moment from "moment";
 
 const AddPatients = () => {
   const navigate = useNavigate();
   const params = useParams();
-
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
-  
-  const getLocalStorage = (key, defaultValue) => {
-    const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : defaultValue;
-  };
-
-  const [name, setName] = useState('');
-  const [identidad, setIdentidad] = useState('');
-  const [phone, setPhone] = useState('');
-  const [age, setAge] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [birthDate, setBirthDate] = useState('');
-  const [selectedNationality, setSelectedNationality] = useState({ value: 1, label: '...' });
-  const [selectedDocumentType, setSelectedDocumentType] = useState({ value: 1, label: '...' });
-  const [selectedGender, setSelectedGender] = useState({ value: 1, label: '...' });
-  const [selectedCivilStatus, setSelectedCivilStatus] = useState({ value: 1, label: '...' });
-  const [selectedOccupation, setSelectedOccupation] = useState({ value: 1, label: '...' });
-
+  const [name, setName] = useState("");
+  const [identidad, setIdentidad] = useState("");
+  const [phone, setPhone] = useState("");
+  const [age, setAge] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [selectedNationality, setSelectedNationality] = useState({});
+  const [selectedGender, setSelectedGender] = useState({
+    value: 1,
+    label: "...",
+  });
+  const [selectedCivilStatus, setSelectedCivilStatus] = useState({
+    value: 1,
+    label: "...",
+  });
+  const [selectedOccupation, setSelectedOccupation] = useState({
+    value: 1,
+    label: "...",
+  });
 
   const [occupationOptions, setOccupationOptions] = useState([]);
   const [civilStatusOptions, setCivilStatusOptions] = useState([]);
@@ -44,12 +42,6 @@ const AddPatients = () => {
     { value: 1, label: "Seleccione su país" },
     { value: 2, label: "Hondureña" },
     { value: 3, label: "Extranjero" },
-  ];
-
-  const documentTypes = [
-    { value: 2, label: "Identidad" },
-    { value: 3, label: "Pasaporte" },
-    { value: 4, label: "Licencia" },
   ];
 
   const saveToLocalStorage = (key, value) => {
@@ -62,32 +54,58 @@ const AddPatients = () => {
   };
 
   const onDateChange = (date, dateString) => {
-    setBirthDate(dateString);
-    saveToLocalStorage("birthDate", dateString);
+    setBirthDate(dateString); // Guarda el dateString en el estado
+    saveToLocalStorage("birthDate", dateString); // Guarda el dateString en localStorage
+
+    if (dateString) {
+      const today = moment(); // Fecha actual
+      const birthDate = moment(dateString, "YYYY-MM-DD"); // Convierte el dateString a un objeto moment
+      const calculatedAge = today.diff(birthDate, "years"); // Calcula la diferencia en años
+      console.log("Edad calculada:", calculatedAge, dateString);
+      setAge(calculatedAge); // Actualiza el estado de la edad
+      saveToLocalStorage("age", calculatedAge); // Guarda la edad en localStorage
+    }
   };
 
   const fetchData = async () => {
     try {
-      const [occupationResponse, civilStatusResponse, genderResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/ocupaciones/ocupacion`),
-        axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/estadoCivil/estadosCivil`),
-        axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/sexo/sexos`),
-      ]);
+      const [occupationResponse, civilStatusResponse, genderResponse] =
+        await Promise.all([
+          axios.get(
+            `${
+              import.meta.env.VITE_REACT_APP_API_URL
+            }/obtener/ocupaciones/ocupacion`
+          ),
+          axios.get(
+            `${
+              import.meta.env.VITE_REACT_APP_API_URL
+            }/obtener/estadoCivil/estadosCivil`
+          ),
+          axios.get(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/sexo/sexos`
+          ),
+        ]);
 
-      setOccupationOptions(occupationResponse.data.map((item) => ({
-        value: item.id_ocupacion,
-        label: item.descripcion,
-      })));
+      setOccupationOptions(
+        occupationResponse.data.map((item) => ({
+          value: item.id_ocupacion,
+          label: item.descripcion,
+        }))
+      );
 
-      setCivilStatusOptions(civilStatusResponse.data.map((item) => ({
-        value: item.id_estado_civil,
-        label: item.descripcion,
-      })));
+      setCivilStatusOptions(
+        civilStatusResponse.data.map((item) => ({
+          value: item.id_estado_civil,
+          label: item.descripcion,
+        }))
+      );
 
-      setGenderOptions(genderResponse.data.map((item) => ({
-        value: item.id_sexo,
-        label: item.descripcion,
-      })));
+      setGenderOptions(
+        genderResponse.data.map((item) => ({
+          value: item.id_sexo,
+          label: item.descripcion,
+        }))
+      );
     } catch (error) {
       console.error("Error al cargar las opciones:", error);
     }
@@ -100,7 +118,9 @@ const AddPatients = () => {
   const selectStyles = {
     control: (baseStyles, state) => ({
       ...baseStyles,
-      borderColor: state.isFocused ? "none" : "2px solid rgba(46, 55, 164, 0.1);",
+      borderColor: state.isFocused
+        ? "none"
+        : "2px solid rgba(46, 55, 164, 0.1);",
       boxShadow: state.isFocused ? "0 0 0 1px #41c1ef" : "none",
       borderRadius: "10px",
       fontSize: "14px",
@@ -109,14 +129,27 @@ const AddPatients = () => {
   };
 
   async function onSubmit() {
-    if ([name, phone, email, age, identidad, address, birthDate, selectedCivilStatus, selectedDocumentType, selectedGender, selectedNationality].includes('')) {
+    if (
+      [
+        name,
+        phone,
+        email,
+        age,
+        identidad,
+        address,
+        birthDate,
+        selectedCivilStatus,
+        selectedGender,
+        selectedNationality,
+      ].includes("")
+    ) {
       Swal.fire({
         icon: "error",
         title: "Campos obligatorios",
-        text: 'Hay campos vacios obligatorios',
+        text: "Hay campos vacios obligatorios",
         showConfirmButton: false,
         showCancelButton: true,
-        cancelButtonText: 'Regresar',
+        cancelButtonText: "Regresar",
         focusCancel: true,
         timer: 2000,
       });
@@ -125,20 +158,25 @@ const AddPatients = () => {
 
     const body = {
       name: name,
-      age: Number(age),
       identidad: Number(identidad),
       phone: phone,
+      age: Number(age),
       email: email,
       direccion: address,
       id_sexo: selectedGender.value,
+      id_ocupacion: selectedOccupation.value,
       id_estado_civil: selectedCivilStatus.value,
       nacionalidad: selectedNationality.label,
-    }
+      fecha_nacimiento: birthDate,
+    };
 
-    // console.log(body);
+    console.log("Informacion del form: ", body);
 
     try {
-      const { data } = await axios.put(`${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${params.id}`, body);
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${params.id}`,
+        body
+      );
 
       console.log(data);
 
@@ -148,68 +186,73 @@ const AddPatients = () => {
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
-        navigate('/PacienteLista');
+        navigate("/PacienteLista");
       });
-
     } catch (error) {
       console.log(error);
     }
-
   }
 
   function cancelarForm() {
     Swal.fire({
       icon: "warning",
       title: "¿Estas Seguro?",
-      text: '¿No deseas seguir editando la informacion de esta paciente?',
-      confirmButtonText: 'Si, Cancelar',
+      text: "¿No deseas seguir editando la informacion de esta paciente?",
+      confirmButtonText: "Si, Cancelar",
       showCancelButton: true,
-      cancelButtonText: 'Regresar',
+      cancelButtonText: "Regresar",
       focusCancel: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate('/PacienteLista');
+        navigate("/PacienteLista");
       }
     });
   }
 
   async function getInfoPaciente() {
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${params.id}`;
-
     try {
+      const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${params.id}`;
       const { data } = await axios(url);
-      console.log(data);
+  
+      console.log("Información del paciente desde la BD: ", data);
+  
+      // Establecer los valores en los estados
       setName(data.nombre_completo);
       setPhone(data.telefono);
       setIdentidad(data.numero_identidad.toString());
       setEmail(data.correo_electronico);
       setAge(data.edad);
-      setAddress(data.direccion ? data.direccion : '');
-
+      setAddress(data.direccion || "");
+      setBirthDate(data.fecha_nacimiento);
+  
+      // Configurar los valores seleccionados para los campos de selección
       setSelectedGender({
         value: data.tbl_sexo.id_sexo,
         label: data.tbl_sexo.descripcion,
       });
-
+  
       setSelectedCivilStatus({
         value: data.tbl_estado_civil.id_estado_civil,
         label: data.tbl_estado_civil.descripcion,
       });
-
+  
       setSelectedOccupation({
         value: data.tbl_ocupacion.id_ocupacion,
         label: data.tbl_ocupacion.descripcion,
       });
-
-      setSelectedOccupation({
-        value: 2,
+  
+      setSelectedNationality({
+        value: data.nacionalidad === "Hondureña" ? 2 : 3,
         label: data.nacionalidad,
       });
-
     } catch (error) {
-      console.log(error);
+      console.error("Error al obtener la información del paciente:", error);
     }
   }
+  
+  useEffect(() => {
+    getInfoPaciente();
+  }, []);
 
   useEffect(() => {
     getInfoPaciente();
@@ -218,7 +261,11 @@ const AddPatients = () => {
   return (
     <div>
       <Header />
-      <Sidebar id="menu-item2" id1="menu-items2" activeClassName="add-patient" />
+      <Sidebar
+        id="menu-item2"
+        id1="menu-items2"
+        activeClassName="add-patient"
+      />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -266,42 +313,20 @@ const AddPatients = () => {
                       </div>
 
                       <div className="col-12 col-md-6 col-xl-4">
-                        <div className="form-group local-forms">
-                          <label>
-                            Nacionalidad<span className="login-danger">*</span>
-                          </label>
-                          <Select
-                            defaultValue={selectedNationality}
-                            onChange={setSelectedNationality}
-                            options={nationalities}
-                            id="search-commodity"
-                            components={{
-                              IndicatorSeparator: () => null
-                            }}
-                            styles={{
-                              control: (baseStyles, state) => ({
-                                ...baseStyles,
-                                borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                boxShadow: state.isFocused ? '0 0 0 1px #41c1ef' : 'none',
-                                '&:hover': {
-                                  borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
-                                },
-                                borderRadius: '10px',
-                                fontSize: "14px",
-                                minHeight: "45px",
-                              }),
-                              dropdownIndicator: (base, state) => ({
-                                ...base,
-                                transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                transition: '250ms',
-                                width: '35px',
-                                height: '35px',
-                              }),
-                            }}
-                          />
-
-                        </div>
-                      </div>
+  <div className="form-group local-forms">
+    <label>
+      Nacionalidad<span className="login-danger">*</span>
+    </label>
+    <Select
+      placeholder="Seleccione su país"
+      value={selectedNationality} // Cambiado de defaultValue a value
+      onChange={setSelectedNationality}
+      options={nationalities}
+      id="search-commodity"
+      styles={selectStyles}
+    />
+  </div>
+</div>
 
                       <div className="form-group col-6 col-sm-6 local-forms">
                         <label>
@@ -322,7 +347,8 @@ const AddPatients = () => {
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms cal-icon">
                           <label>
-                            Fecha Nacimiento <span className="login-danger">*</span>
+                            Fecha Nacimiento{" "}
+                            <span className="login-danger">*</span>
                           </label>
                           <DatePicker
                             className="form-control datetimepicker"
@@ -335,17 +361,12 @@ const AddPatients = () => {
 
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
-                          <label>
-                            Edad
-                          </label>
+                          <label>Edad</label>
                           <input
                             className="form-control"
                             type="text"
                             value={age}
-                            onChange={(e) => {
-                              setAge(e.target.value);
-                              saveToLocalStorage("age", e.target.value);
-                            }}
+                            readOnly // Hace que el campo sea de solo lectura
                           />
                         </div>
                       </div>
@@ -358,7 +379,10 @@ const AddPatients = () => {
                           </label>
                           <Select
                             value={selectedGender}
-                            onChange={handleChange("selectedGender", setSelectedGender)}
+                            onChange={handleChange(
+                              "selectedGender",
+                              setSelectedGender
+                            )}
                             options={genderOptions}
                             components={{ IndicatorSeparator: () => null }}
                             styles={selectStyles}
@@ -375,13 +399,12 @@ const AddPatients = () => {
                           <input
                             className="form-control"
                             type="text"
-                            value={phone}  // Se enlaza el valor con el estado `phone`
+                            value={phone} // Se enlaza el valor con el estado `phone`
                             onChange={(e) => {
-                              setPhone(e.target.value);  // Actualiza el estado con el nuevo valor
-                              saveToLocalStorage("phone", e.target.value);  // Guarda en localStorage
+                              setPhone(e.target.value); // Actualiza el estado con el nuevo valor
+                              saveToLocalStorage("phone", e.target.value); // Guarda en localStorage
                             }}
                           />
-
                         </div>
                       </div>
 
@@ -389,7 +412,8 @@ const AddPatients = () => {
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
                           <label>
-                            Correo Electronico <span className="login-danger">*</span>
+                            Correo Electronico{" "}
+                            <span className="login-danger">*</span>
                           </label>
                           <input
                             className="form-control"
@@ -411,14 +435,13 @@ const AddPatients = () => {
                           </label>
                           <textarea
                             className="form-control"
-                            value={address}  // Se enlaza el valor con el estado `address`
+                            value={address} // Se enlaza el valor con el estado `address`
                             onChange={(e) => {
-                              setAddress(e.target.value);  // Actualiza el estado con el nuevo valor
-                              saveToLocalStorage("address", e.target.value);  // Guarda en localStorage
+                              setAddress(e.target.value); // Actualiza el estado con el nuevo valor
+                              saveToLocalStorage("address", e.target.value); // Guarda en localStorage
                             }}
                             placeholder=""
                           ></textarea>
-
                         </div>
                       </div>
 
@@ -430,7 +453,10 @@ const AddPatients = () => {
                           </label>
                           <Select
                             value={selectedOccupation}
-                            onChange={handleChange('selectedOccupation', setSelectedOccupation)}
+                            onChange={handleChange(
+                              "selectedOccupation",
+                              setSelectedOccupation
+                            )}
                             options={occupationOptions}
                             components={{ IndicatorSeparator: () => null }}
                             styles={selectStyles}
@@ -446,7 +472,10 @@ const AddPatients = () => {
                           </label>
                           <Select
                             value={selectedCivilStatus}
-                            onChange={handleChange("selectedCivilStatus", setSelectedCivilStatus)}
+                            onChange={handleChange(
+                              "selectedCivilStatus",
+                              setSelectedCivilStatus
+                            )}
                             options={civilStatusOptions}
                             components={{ IndicatorSeparator: () => null }}
                             styles={selectStyles}

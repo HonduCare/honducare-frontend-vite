@@ -1,43 +1,51 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
-import Swal from 'sweetalert2';
-import axios from 'axios';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../Helpers/userContext";
+import { Table, Button, Modal, Form, Input } from "antd";
+import { Link } from "react-router-dom";
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import FeatherIcon from "feather-icons-react/build/FeatherIcon";
+import Swal from "sweetalert2";
+import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
 
 const ListaHG = () => {
+  const { usuarioLogged } = useContext(UserContext);
   const [isRoleModalVisible, setIsRoleModalVisible] = useState(false);
   const [hgList, setHgList] = useState([]);
   const [hgData, setHgData] = useState({});
   const { handleSubmit, reset, setValue, control } = useForm({});
   const [mode, setMode] = useState("");
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
+  const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
   const showRoleModal = () => {
     setIsRoleModalVisible(true);
   };
 
   const handleRoleCancel = () => {
-    setValue('id_descripcion_ginecoobstetrica', '');
-    setValue('descripcion', '');
+    setValue("id_descripcion_ginecoobstetrica", "");
+    setValue("descripcion", "");
     setIsRoleModalVisible(false);
   };
 
   const handleEditHG = (data) => {
     setHgData(data);
     setMode("editar");
-    setValue('id_descripcion_ginecoobstetrica', data?.id_descripcion_ginecoobstetrica);
-    setValue('descripcion', data?.descripcion);
+    setValue(
+      "id_descripcion_ginecoobstetrica",
+      data?.id_descripcion_ginecoobstetrica
+    );
+    setValue("descripcion", data?.descripcion);
     showRoleModal();
   };
 
   const obtenerHG = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/historiaGinecoobstetrica/descripciones`);
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_REACT_APP_API_URL
+        }/obtener/historiaGinecoobstetrica/descripciones`
+      );
       setHgList(response.data);
     } catch (error) {
       console.error("Error al obtener las HG:", error);
@@ -47,31 +55,41 @@ const ListaHG = () => {
   const onSubmit = async (data) => {
     try {
       switch (mode) {
-        case 'crear':
-          {
-            const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/crear/historiaGinecoobstetrica`, data);
-            if (response.status === 200) {
-              reset();
-              handleSave();
-              obtenerHG();
-              handleRoleCancel();
-            }
-            break;
+        case "crear": {
+          const response = await axios.post(
+            `${
+              import.meta.env.VITE_REACT_APP_API_URL
+            }/crear/historiaGinecoobstetrica`,
+            data
+          );
+          if (response.status === 200) {
+            reset();
+            handleSave();
+            obtenerHG();
+            handleRoleCancel();
           }
-        case 'editar':
-          {
-            const response = await axios.put(`${import.meta.env.VITE_REACT_APP_API_URL}/actualizar/historiaGinecoobstetrica/${hgData.id_descripcion_ginecoobstetrica}`, data);
-            if (response.status === 200) {
-              Swal.fire({
-                title: 'Historia Ginecobstetrica editada exitosamente',
-                icon: 'success',
-                confirmButtonText: 'Aceptar'
-              });
-              obtenerHG();
-              handleRoleCancel();
-            }
-            break;
+          break;
+        }
+        case "editar": {
+          const response = await axios.put(
+            `${
+              import.meta.env.VITE_REACT_APP_API_URL
+            }/actualizar/historiaGinecoobstetrica/${
+              hgData.id_descripcion_ginecoobstetrica
+            }`,
+            data
+          );
+          if (response.status === 200) {
+            Swal.fire({
+              title: "Historia Ginecobstetrica editada exitosamente",
+              icon: "success",
+              confirmButtonText: "Aceptar",
+            });
+            obtenerHG();
+            handleRoleCancel();
           }
+          break;
+        }
         default:
           break;
       }
@@ -82,12 +100,16 @@ const ListaHG = () => {
 
   const eliminarHG = async (id) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_REACT_APP_API_URL}/eliminar/historiaGinecoobstetrica/${id}`);
+      const response = await axios.delete(
+        `${
+          import.meta.env.VITE_REACT_APP_API_URL
+        }/eliminar/historiaGinecoobstetrica/${id}`
+      );
       if (response.status === 200) {
         Swal.fire({
-          title: 'Historia Ginecobstetrica eliminada exitosamente',
-          icon: 'success',
-          confirmButtonText: 'Aceptar'
+          title: "Historia Ginecobstetrica eliminada exitosamente",
+          icon: "success",
+          confirmButtonText: "Aceptar",
         });
         obtenerHG();
       }
@@ -102,52 +124,80 @@ const ListaHG = () => {
 
   const hgColumns = [
     {
-      title: 'Historia Ginecobstetrica',
-      dataIndex: 'descripcion',
-      key: 'descripcion',
+      title: "Historia Ginecobstetrica",
+      dataIndex: "descripcion",
+      key: "descripcion",
     },
     {
-      title: '',
-      key: 'actions',
-      render: (text, record) => (
-        <div className="text-start">
-          <div className="dropdown dropdown-action">
-            <Link
-              to="#"
-              className="action-icon dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i className="fas fa-ellipsis-v" />
-            </Link>
-            <div className="dropdown-menu dropdown-menu-start">
-              <button className="dropdown-item" onClick={() => handleEditHG(record)}>
-                <i className="far fa-edit me-2" />
-                Editar
-              </button>
-              <button className="dropdown-item" onClick={() => eliminarHG(record.id_descripcion_ginecoobstetrica)}>
-                <i className="fa fa-trash-alt m-r-5"></i> Eliminar
-              </button>
+      title: "",
+      key: "actions",
+      render: (text, record) => {
+        const hasUpdatePermission = usuarioLogged?.rol?.permisos.some(
+          (permiso) => permiso.nombre === "actualizar"
+        );
+        const hasDeletePermission = usuarioLogged?.rol?.permisos.some(
+          (permiso) => permiso.nombre === "eliminar"
+        );
+
+        // Si no tiene permisos adicionales, no mostrar nada
+        if (!hasUpdatePermission && !hasDeletePermission) {
+          return null;
+        }
+
+        return (
+          <div className="text-start">
+            <div className="dropdown dropdown-action">
+              <Link
+                to="#"
+                className="action-icon dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="fas fa-ellipsis-v" />
+              </Link>
+              <div className="dropdown-menu dropdown-menu-start">
+                {/* Mostrar opción "Editar" si tiene permiso "actualizar" */}
+                {hasUpdatePermission && (
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleEditHG(record)}
+                  >
+                    <i className="far fa-edit me-2" />
+                    Editar
+                  </button>
+                )}
+                {/* Mostrar opción "Eliminar" si tiene permiso "eliminar" */}
+                {hasDeletePermission && (
+                  <button
+                    className="dropdown-item"
+                    onClick={() =>
+                      eliminarHG(record.id_descripcion_ginecoobstetrica)
+                    }
+                  >
+                    <i className="fa fa-trash-alt m-r-5"></i> Eliminar
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
   const handleSave = () => {
     Swal.fire({
-      icon: 'success',
-      title: '¡Historia Ginecobstetrica Agregada con Exito!',
+      icon: "success",
+      title: "¡Historia Ginecobstetrica Agregada con Exito!",
       showConfirmButton: false,
-      timer: 1500
+      timer: 1500,
     });
   };
 
   return (
     <>
       <Header />
-      <Sidebar id='menu-item6' id1='menu-items6' activeClassName='lista-hg' />
+      <Sidebar id="menu-item6" id1="menu-items6" activeClassName="lista-hg" />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -162,7 +212,9 @@ const ListaHG = () => {
                       <FeatherIcon icon="chevron-right" />
                     </i>
                   </li>
-                  <li className="breadcrumb-item active">Historia Ginecobstetrica</li>
+                  <li className="breadcrumb-item active">
+                    Historia Ginecobstetrica
+                  </li>
                 </ul>
               </div>
             </div>
@@ -178,14 +230,20 @@ const ListaHG = () => {
                         <h3>Historia Ginecobstetrica</h3>
                       </div>
                       <div className="col-auto text-end">
-                        <Button type="primary" 
-                        onClick={() => { 
-                        showRoleModal(); 
-                        setMode("crear"); 
-                        }}className="btn-primary"
-                        >
-                          Crear Historia Ginecobstetrica
-                        </Button>
+                        {usuarioLogged?.rol?.permisos.some(
+                          (permiso) => permiso.nombre === "registrar"
+                        ) && (
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              showRoleModal();
+                              setMode("crear");
+                            }}
+                            className="btn-primary"
+                          >
+                            Crear Historia Ginecobstetrica
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -202,13 +260,17 @@ const ListaHG = () => {
       </div>
 
       <Modal
-        title={mode === "editar" ? "Editar Historia Ginecobstetrica" : "Crear Historia Ginecobstetrica"}
-        visible={isRoleModalVisible}
+        title={
+          mode === "editar"
+            ? "Editar Historia Ginecobstetrica"
+            : "Crear Historia Ginecobstetrica"
+        }
+        open={isRoleModalVisible}
         onCancel={handleRoleCancel}
         footer={null}
       >
         <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
-          {mode === 'editar' && (
+          {mode === "editar" && (
             <Form.Item label="ID" rules={[{ required: true }]}>
               <Controller
                 name="id_descripcion_ginecoobstetrica"

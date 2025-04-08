@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Table, Button, Modal, Form, Input } from "antd";
-import UserContext from "../Helpers/userContext";
+import {UserContext} from "../Helpers/userContext";
 import { Link } from "react-router-dom";
 import Header from "../Header";
 import Sidebar from "../Sidebar";

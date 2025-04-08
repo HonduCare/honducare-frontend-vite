@@ -1,19 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import { Table, Button, Modal, Form, Input } from 'antd';
-import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
-import axios from 'axios';
-import { useForm, Controller } from 'react-hook-form';
-import createAuthHeaders from '../../helpers/createAuthHeaders';
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../Helpers/userContext";
+import { Link } from "react-router-dom";
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import { Table, Button, Modal, Form, Input } from "antd";
+import FeatherIcon from "feather-icons-react/build/FeatherIcon";
+import axios from "axios";
+import { useForm, Controller } from "react-hook-form";
+import createAuthHeaders from "../../helpers/createAuthHeaders";
 
 function ListaEspecialidades() {
+  const { usuarioLogged } = useContext(UserContext);
   const [especialidades, setEspecialidades] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [idEspecialidad, setIdEspecialidad] = useState('');
+  const [idEspecialidad, setIdEspecialidad] = useState("");
 
-  const { handleSubmit, reset, setValue, control } = useForm({});
+  const { handleSubmit, setValue, control } = useForm({});
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -41,7 +43,7 @@ function ListaEspecialidades() {
         await axios.put(url + `/${idEspecialidad}`, data, config);
 
         // console.log(dataAxios);
-        setIdEspecialidad('');
+        setIdEspecialidad("");
         setShowModal(false);
         getEspecialidades();
         return;
@@ -50,52 +52,63 @@ function ListaEspecialidades() {
       await axios.post(url, data, config);
       setShowModal(false);
       getEspecialidades();
-
     } catch (error) {
-      setIdEspecialidad('');
+      setIdEspecialidad("");
       setShowModal(false);
       console.log(error);
     }
-
   }
 
   const especialidadesColumns = [
     {
-      title: 'Especialidad',
-      dataIndex: 'nombre',
-      key: 'nombre',
+      title: "Especialidad",
+      dataIndex: "nombre",
+      key: "nombre",
     },
     {
-      title: '',
-      key: 'actions',
-      render: (_, record) => (
-        <div className="text-start">
-          <div className="dropdown dropdown-action">
-            <Link
-              to="#"
-              className="action-icon dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <i className="fas fa-ellipsis-v" />
-            </Link>
-            <div className="dropdown-menu dropdown-menu-start">
-              <button
-                className="dropdown-item"
-                onClick={() => {
-                  setShowModal(true);
-                  setIdEspecialidad(record.id_especialidad);
-                  setValue('nombre', record.nombre);
-                  // console.log(record);
-                }}
+      title: "",
+      key: "actions",
+      render: (_, record) => {
+        const hasUpdatePermission = usuarioLogged?.rol?.permisos.some(
+          (permiso) => permiso.nombre === "actualizar"
+        );
+
+        // Si no tiene permiso "actualizar", no mostrar nada
+        if (!hasUpdatePermission) {
+          return null;
+        }
+
+        return (
+          <div className="text-start">
+            <div className="dropdown dropdown-action">
+              <Link
+                to="#"
+                className="action-icon dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-                <i className="far fa-edit me-2" />
-                Editar
-              </button>
+                <i className="fas fa-ellipsis-v" />
+              </Link>
+              <div className="dropdown-menu dropdown-menu-start">
+                {/* Mostrar opción "Editar" si tiene permiso "actualizar" */}
+                {hasUpdatePermission && (
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      setShowModal(true);
+                      setIdEspecialidad(record.id_especialidad);
+                      setValue("nombre", record.nombre);
+                    }}
+                  >
+                    <i className="far fa-edit me-2" />
+                    Editar
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -106,7 +119,11 @@ function ListaEspecialidades() {
   return (
     <>
       <Header />
-      <Sidebar id="menu-item6" id1="menu-items6" activeClassName="especialidades" />
+      <Sidebar
+        id="menu-item6"
+        id1="menu-items6"
+        activeClassName="especialidades"
+      />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -137,15 +154,19 @@ function ListaEspecialidades() {
                         <h3>Especialidades</h3>
                       </div>
                       <div className="col-auto text-end">
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            setShowModal(true)
-                          }}
-                          className="btn-primary"
-                        >
-                          Crear Especialidad
-                        </Button>
+                        {usuarioLogged?.rol?.permisos.some(
+                          (permiso) => permiso.nombre === "registrar"
+                        ) && (
+                          <Button
+                            type="primary"
+                            onClick={() => {
+                              setShowModal(true);
+                            }}
+                            className="btn-primary"
+                          >
+                            Crear Especialidad
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -162,34 +183,40 @@ function ListaEspecialidades() {
       </div>
 
       <Modal
-        title={idEspecialidad ? 'Editar Especialidad' : 'Crear Especialidad'}
-        visible={showModal}
+        title={idEspecialidad ? "Editar Especialidad" : "Crear Especialidad"}
+        open={showModal}
         onCancel={() => setShowModal(false)}
         footer={null}
       >
         <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
           <Form.Item
             label="Nombre de la especialidad"
-            rules={[{ required: true, message: 'Por favor ingrese el nombre del sexo' }]}
+            rules={[
+              {
+                required: true,
+                message: "Por favor ingrese el nombre del sexo",
+              },
+            ]}
           >
             <Controller
               name="nombre"
               control={control}
               rules={{ required: true }}
-              render={({ field }) => <Input {...field} placeholder='Especialidad' />}
+              render={({ field }) => (
+                <Input {...field} placeholder="Especialidad" />
+              )}
             />
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              {idEspecialidad ? 'Editar' : 'Crear'}
+              {idEspecialidad ? "Editar" : "Crear"}
             </Button>
           </Form.Item>
         </Form>
       </Modal>
-
     </>
-  )
+  );
 }
 
-export default ListaEspecialidades
+export default ListaEspecialidades;

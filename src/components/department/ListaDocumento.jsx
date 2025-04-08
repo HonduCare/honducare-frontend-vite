@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Table, Button, Modal, Form, Input } from "antd";
 import { Link } from "react-router-dom";
-import UserContext from "../Helpers/userContext";
+import {UserContext} from "../Helpers/userContext";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";

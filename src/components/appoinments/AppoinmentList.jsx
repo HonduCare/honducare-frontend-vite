@@ -16,25 +16,10 @@ const AppoinmentList = () => {
   const { usuarioLogged } = useContext(UserContext);
   //const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [datasource, setDatasource] = useState([]);
-  const [idCitaAEliminar, setIdCitaAEliminar] = useState(null);
   const [search, setSearch] = useState("");
   const [citasFiltradas, setCitasFiltradas] = useState([]);
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
-
-  {
-    /* const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };*/
-  }
-
-  {
-    /*  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };*/
-  }
 
   function buscarCitaNombre() {
     if (search == "") {
@@ -166,41 +151,8 @@ const AppoinmentList = () => {
                   <button
                     className="dropdown-item"
                     to="#"
-                    onClick={() => {
-                      setIdCitaAEliminar(record.id_cita);
-                      Swal.fire({
-                        title: "Cancelar cita",
-                        input: "textarea",
-                        inputAttributes: {
-                          placeholder:
-                            "Ingrese el motivo por el cual cancelará la cita",
-                        },
-                        showCancelButton: true,
-                        confirmButtonText: "Cancelar Cita",
-                        cancelButtonText: "Regresar",
-                        showLoaderOnConfirm: true,
-                        preConfirm: async (motivo) => {
-                          try {
-                            const url = `${
-                              import.meta.env.VITE_REACT_APP_API_URL
-                            }/actualizar/cita/cancelar/${idCitaAEliminar}`;
-                            const { data } = await axios.put(url, {
-                              motivo_cancelacion: motivo,
-                            });
-                            if (!data) {
-                              return Swal.showValidationMessage(`No hay data`);
-                            }
-                          } catch (error) {
-                            Swal.showValidationMessage(
-                              `Error: ${error.response.data.mensaje}`
-                            );
-                          }
-                        },
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          obtenerCita();
-                        }
-                      });
+                    onClick={ async () => {
+                      await DeleteCita(record.id_cita);
                     }}
                   >
                     <i className="fa fa-trash-alt m-r-5"></i> Cancelar Cita
@@ -215,40 +167,61 @@ const AppoinmentList = () => {
   ];
 
   // Función para eliminar la cita
-  const DeleteCita = async () => {
-    if (!idCitaAEliminar) return;
-
-    try {
-      const url = `${
-        import.meta.env.VITE_REACT_APP_API_URL
-      }/eliminar/cita/${idCitaAEliminar}`;
-      const response = await axios.delete(url);
-
-      if (response.data.mensaje === "Cita eliminada exitosamente") {
-        Swal.fire({
-          icon: "success",
-          title: "¡Cita eliminada con éxito!",
-          showConfirmButton: false,
-          timer: 1500,
-        }).then(() => {
-          // Elimina la cita de la lista localmente
-          setDatasource((prevDatasource) =>
-            prevDatasource.filter((cita) => cita.id_cita !== idCitaAEliminar)
-          );
-        });
-      } else {
+  const DeleteCita = async (idCita) => {
+    if (!idCita) return;
+  
+    // Mostrar Swal de confirmación
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción no se puede deshacer. ¿Deseas eliminar esta cita?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      reverseButtons: true,
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        const url = `${
+          import.meta.env.VITE_REACT_APP_API_URL
+        }/eliminar/cita/${idCita}`;
+        const response = await axios.delete(url);
+  
+        if (response.data.mensaje === "Cita eliminada exitosamente") {
+          Swal.fire({
+            icon: "success",
+            title: "¡Cita eliminada con éxito!",
+            showConfirmButton: false,
+            timer: 1500,
+          }).then(() => {
+            // Elimina la cita de la lista localmente
+            setDatasource((prevDatasource) =>
+              prevDatasource.filter((cita) => cita.id_cita !== idCita)
+            );
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: response.data.mensaje || "Hubo un problema al eliminar la cita",
+          });
+        }
+      } catch (error) {
+        console.error("Error al eliminar la cita:", error);
         Swal.fire({
           icon: "error",
-          title: "Error",
-          text: response.data.mensaje || "Hubo un problema al eliminar la cita",
+          title: "Error al eliminar la cita",
+          text: "Hubo un problema al procesar tu solicitud. Intenta de nuevo.",
         });
       }
-    } catch (error) {
-      console.error("Error al eliminar la cita:", error);
+    } else {
       Swal.fire({
-        icon: "error",
-        title: "Error al eliminar la cita",
-        text: "Hubo un problema al procesar tu solicitud. Intenta de nuevo.",
+        icon: "info",
+        title: "Cancelado",
+        text: "La cita no fue eliminada.",
+        timer: 1500,
+        showConfirmButton: false,
       });
     }
   };
@@ -263,6 +236,7 @@ const AppoinmentList = () => {
       console.error("Error al obtener las citas:", error);
     }
   }
+
 
   useEffect(() => {
     obtenerCita();
