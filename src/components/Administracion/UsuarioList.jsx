@@ -19,19 +19,16 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
-import { use } from "react";
 
 const suariolist = () => {
   const { usuarioLogged } = useContext(UserContext);
  
-  const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
-  const [usuarioEliminar, setUsuarioEliminar] = useState({});
 
   const onSelectChange = (newSelectedRowKeys) => {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
@@ -82,34 +79,60 @@ const suariolist = () => {
   }
 
   // Funcion para eliminar un usuario
-  async function onDeleteUsuario() {
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/eliminar-usuario/${
-      usuarioEliminar.id_usuario
-    }`;
-    try {
-      const { data } = await axios.delete(url);
+  async function onDeleteUsuario(usuarioEliminar) {
+    console.log(usuarioEliminar);
+    if(usuarioEliminar.id_rol === 3){
       Swal.fire({
+        title: "Error",
+        text: "No se puede eliminar al usuario administrador.",
         icon: "error",
-        title: "Usuario eliminado",
-        text: `Se elimino el usuario ${usuarioEliminar.nombre_de_usuario} correctamente.`,
-        showConfirmButton: true,
-        timer: 3000,
         confirmButtonText: "Aceptar",
       });
-      navigate("/Usuariolista");
-    } catch (error) {
-      console.log(error.response.data);
-      Swal.fire({
-        icon: "error",
-        title: "",
-        text: `No se elimino el usuario ${usuarioEliminar.nombre_de_usuario} debido a que tiene transaccciones pendientes por realizar.`,
-        showConfirmButton: true,
-        timer: 6000,
-        confirmButtonText: "Aceptar",
-      });
+      return;
     }
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: `¿Deseas eliminar al usuario ${usuarioEliminar.nombre_de_usuario}? Esta acción no se puede deshacer.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const url = `${import.meta.env.VITE_REACT_APP_API_URL}/eliminar-usuario/${
+          usuarioEliminar.id_usuario
+        }`;
+        try {
+          const { data } = await axios.delete(url);
+          Swal.fire({
+            title: "¡Eliminado!",
+            text: `El usuario ${usuarioEliminar.nombre_de_usuario} ha sido eliminado correctamente.`,
+            icon: "success",
+            confirmButtonText: "Aceptar",
+          });
+          await getUsers();
+        } catch (error) {
+          console.error(error.response?.data);
+          Swal.fire({
+            title: "Error",
+            text: `No se pudo eliminar al usuario ${usuarioEliminar.nombre_de_usuario}. Puede tener transacciones pendientes.`,
+            icon: "error",
+            confirmButtonText: "Aceptar",
+          });
+        }
+      } else {
+        Swal.fire({
+          title: "Cancelado",
+          text: "La acción de eliminar usuario fue cancelada.",
+          icon: "info",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      }
+    });
   }
-
   // Obtener todos los usuarios al cargar el componente
   useEffect(() => {
     getUsers();
@@ -131,20 +154,6 @@ const suariolist = () => {
       render: (text, record) => (
         <h2 className="profile-image">{record.numero_identidad}</h2>
       ),
-    },
-    {
-      /*
-            title:"Edad",
-            dataIndex: "edad",
-                sorter: (a, b) => a.edad.length - b.edad.length,
-        */
-    },
-    {
-      /*
-            title:"Sexo",
-            dataIndex: "sexo",
-                sorter: (a, b) => a.sexo.length - b.sexo.length
-        */
     },
     {
       title: "Correo Electronico",
@@ -202,11 +211,9 @@ const suariolist = () => {
                       (permiso) => permiso.nombre === "eliminar"
                     ) && (
                       <Link
-                        onClick={() => setUsuarioEliminar(record)}
+                        onClick={() => onDeleteUsuario(record)}
                         className="dropdown-item"
-                        to="#"
-                        data-bs-toggle="modal"
-                        data-bs-target="#delete_patient"
+                       
                       >
                         <i className="fa fa-trash-alt m-r-5"></i> Eliminar
                       </Link>

@@ -63,7 +63,7 @@ const ExamenFisico = () => {
     try {
       const url = `${import.meta.env.VITE_REACT_APP_API_URL}/crear/preclinica`;
 
-      const config = createAuthHeaders();
+      const config = await createAuthHeaders();
 
       const body = {
         id_cita: params.id_cita,

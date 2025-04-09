@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-duplicate-props */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
@@ -12,7 +10,6 @@ import createAuthHeaders from "../../helpers/createAuthHeaders";
 
 const AddUser = () => {
   const navigate = useNavigate();
-  // Constantes
   const [rolSelected, setRolSelected] = useState({
     value: '1',
     label: 'Doctor'
@@ -71,7 +68,7 @@ const AddUser = () => {
     try {
       console.log("Datos enviados:", body);
 
-      const config = createAuthHeaders();
+      const config = await createAuthHeaders();
 
       const response = await axios.post(url, body, config);
       console.log("Usuario creado");

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { EyeOff, Eye } from "react-feather";
 import { login02, loginlogo } from "../../imagepath";
 import { auth } from "../../../FirebaseConfig.js";
-import { signInWithEmailAndPassword,getIdToken } from "firebase/auth";
+import { signInWithEmailAndPassword,getIdToken, signOut } from "firebase/auth";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -34,6 +34,18 @@ const Login = () => {
           },
         }
       );
+      console.log(response.data);
+      if(response.data.data.estado !== "activo"){
+        await signOut(auth);
+        Swal.fire({
+          title: "Error!",
+          text: "Usuario inactivo. Por favor, contacte al administrador.",
+          icon: "error",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+        return;
+      }
       if (response.data.autenticated) {
         localStorage.setItem("user", JSON.stringify(response.data.data));
         localStorage.setItem("token", response.data.token);

@@ -1,4 +1,4 @@
-/* eslint-disable react/jsx-no-duplicate-props */
+
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Importar Axios
@@ -6,8 +6,6 @@ import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Select from "react-select";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import { removeComillas } from "../../helpers";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 
 const HabitosToxicos = () => {

@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-duplicate-props */
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
@@ -7,7 +5,6 @@ import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import Select from "react-select";
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import { SignalCellularNullTwoTone } from "@mui/icons-material";
 
 const PatologiasFamiliares = () => {
   const [selectedPatologia, setSelectedPatologia] = useState(null);

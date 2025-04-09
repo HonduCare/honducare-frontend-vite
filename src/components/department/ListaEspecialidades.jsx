@@ -20,7 +20,7 @@ function ListaEspecialidades() {
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
   async function getEspecialidades() {
-    const config = createAuthHeaders();
+    const config = await createAuthHeaders();
 
     const url = `${import.meta.env.VITE_REACT_APP_API_URL}/especialidad`;
 
@@ -34,7 +34,7 @@ function ListaEspecialidades() {
   }
 
   async function onSubmit(data) {
-    const config = createAuthHeaders();
+    const config = await createAuthHeaders();
 
     const url = `${import.meta.env.VITE_REACT_APP_API_URL}/especialidad`;
 

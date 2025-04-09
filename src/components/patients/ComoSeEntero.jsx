@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-no-duplicate-props */
-/* eslint-disable no-unused-vars */
+
 import React, { useState } from "react";
 import axios from "axios";
 import Header from "../Header";
@@ -78,6 +77,7 @@ const ComoSeEntero = () => {
         id_estado_civil: selectedCivilStatus.value,
         id_sexo: selectedGender.value,
         id_ocupacion: selectedOccupation.value,
+        fecha_nacimiento: removeComillas(birthDate),
         patologiasFamiliares: addedPatologias.filter(item => item.tipo === "Familiar"),
         patologiasPersonales: addedPatologias.filter(item => item.tipo === "Personal"),
         antecedentesHospitalarios: addedAntecedentes,
@@ -85,12 +85,10 @@ const ComoSeEntero = () => {
         como_se_entero: selectedOption.value,
       }
 
-      // console.log(data);
-
-      // Llamada al backend para crear expediente
+      console.log(data);
       const response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/crear/expediente`, data);
 
-      if (response.status === 201) {
+    if (response.status === 201) {
         Swal.fire({
           icon: 'success',
           title: '¡Expediente Completado con Éxito!',

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
@@ -116,10 +117,7 @@ const EditUsuario = () => {
       estado: estadoSelected.value,
       id_especialidad: especialidadSelected.value,
     }
-
-    // console.log(body);
-
-    const config = createAuthHeaders();
+    const config = await createAuthHeaders();
 
     try {
       const { status } = await axios.put(url, body, config);
@@ -144,7 +142,6 @@ const EditUsuario = () => {
   useEffect(() => {
     getData();
     getUserInfo();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

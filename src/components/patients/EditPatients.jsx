@@ -211,11 +211,13 @@ const AddPatients = () => {
 
   async function getInfoPaciente() {
     try {
-      const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${params.id}`;
+      const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${
+        params.id
+      }`;
       const { data } = await axios(url);
-  
+
       console.log("Información del paciente desde la BD: ", data);
-  
+
       // Establecer los valores en los estados
       setName(data.nombre_completo);
       setPhone(data.telefono);
@@ -224,23 +226,23 @@ const AddPatients = () => {
       setAge(data.edad);
       setAddress(data.direccion || "");
       setBirthDate(data.fecha_nacimiento);
-  
+
       // Configurar los valores seleccionados para los campos de selección
       setSelectedGender({
         value: data.tbl_sexo.id_sexo,
         label: data.tbl_sexo.descripcion,
       });
-  
+
       setSelectedCivilStatus({
         value: data.tbl_estado_civil.id_estado_civil,
         label: data.tbl_estado_civil.descripcion,
       });
-  
+
       setSelectedOccupation({
         value: data.tbl_ocupacion.id_ocupacion,
         label: data.tbl_ocupacion.descripcion,
       });
-  
+
       setSelectedNationality({
         value: data.nacionalidad === "Hondureña" ? 2 : 3,
         label: data.nacionalidad,
@@ -249,7 +251,7 @@ const AddPatients = () => {
       console.error("Error al obtener la información del paciente:", error);
     }
   }
-  
+
   useEffect(() => {
     getInfoPaciente();
   }, []);
@@ -313,20 +315,20 @@ const AddPatients = () => {
                       </div>
 
                       <div className="col-12 col-md-6 col-xl-4">
-  <div className="form-group local-forms">
-    <label>
-      Nacionalidad<span className="login-danger">*</span>
-    </label>
-    <Select
-      placeholder="Seleccione su país"
-      value={selectedNationality} // Cambiado de defaultValue a value
-      onChange={setSelectedNationality}
-      options={nationalities}
-      id="search-commodity"
-      styles={selectStyles}
-    />
-  </div>
-</div>
+                        <div className="form-group local-forms">
+                          <label>
+                            Nacionalidad<span className="login-danger">*</span>
+                          </label>
+                          <Select
+                            placeholder="Seleccione su país"
+                            value={selectedNationality} 
+                            onChange={setSelectedNationality}
+                            options={nationalities}
+                            id="search-commodity"
+                            styles={selectStyles}
+                          />
+                        </div>
+                      </div>
 
                       <div className="form-group col-6 col-sm-6 local-forms">
                         <label>

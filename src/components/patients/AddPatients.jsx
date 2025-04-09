@@ -8,18 +8,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 import axios from "axios";
 import moment from 'moment';
-import { ViewAgendaOutlined } from "@mui/icons-material";
 
 const AddPatients = () => {
   const navigate = useNavigate();
 
-  const getLocalStorage = (key, defaultValue) => {
+  const getLocalStorage = (key, defaultValue) => { 
     const storedValue = localStorage.getItem(key);
     return storedValue ? JSON.parse(storedValue) : defaultValue;
   };
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
+  const [pacientes, setPacientes] = useState([]);
   const [name, setName] = useState(getLocalStorage("name", ""));
   const [identidad, setIdentidad] = useState(getLocalStorage("identidad", ""));
   const [phone, setPhone] = useState(getLocalStorage("phone", ""));
@@ -58,10 +58,30 @@ const AddPatients = () => {
     saveToLocalStorage(key, value);
   };
 
-  const onDateChange = (date, dateString) => {
+  const getPacientes = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/pacientes`);
+       console.log(response.data);
+      setPacientes(response.data);
+    } catch (error) {
+      console.error("Error al cargar los datos: ", error);
+    }
+  };
+
+ const onDateChange = (date, dateString) => {
     setBirthDate(dateString);
     saveToLocalStorage("birthDate", dateString);
+
+    if (dateString) {
+      const today = moment(); // Fecha actual
+      const birthDate = moment(dateString, "YYYY-MM-DD");
+      const calculatedAge = today.diff(birthDate, "years");
+      console.log("Edad calculada:", calculatedAge, dateString);
+      setAge(calculatedAge);
+      saveToLocalStorage("age", calculatedAge);
+    }
   };
+
 
   const fetchData = async () => {
     try {
@@ -92,6 +112,7 @@ const AddPatients = () => {
 
   useEffect(() => {
     fetchData();
+    getPacientes();
   }, []);
 
   const selectStyles = {
@@ -106,6 +127,50 @@ const AddPatients = () => {
   };
 
   function validarForm() {
+    const pacienteExistenteIdentidad = pacientes.find(
+      (paciente) => paciente.numero_identidad === identidad
+    );
+  
+    if (pacienteExistenteIdentidad) {
+      Swal.fire({
+        icon: "error",
+        title: "Número de identidad duplicado",
+        text: `El número de identidad ${identidad} ya está asignado al paciente ${pacienteExistenteIdentidad.nombre_completo}.`,
+        confirmButtonText: "Aceptar",
+      });
+      return;
+    }
+  
+    // Verificar si el teléfono ya está registrado
+    const pacienteExistenteTelefono = pacientes.find(
+      (paciente) => paciente.telefono === phone
+    );
+  
+    if (pacienteExistenteTelefono) {
+      Swal.fire({
+        icon: "error",
+        title: "Teléfono duplicado",
+        text: `El teléfono ${phone} ya está asignado al paciente ${pacienteExistenteTelefono.nombre_completo}.`,
+        confirmButtonText: "Aceptar",
+      });
+      return;
+    }
+  
+    // Verificar si el correo electrónico ya está registrado
+    const pacienteExistenteCorreo = pacientes.find(
+      (paciente) => paciente.correo_electronico === email
+    );
+  
+    if (pacienteExistenteCorreo) {
+      Swal.fire({
+        icon: "error",
+        title: "Correo electrónico duplicado",
+        text: `El correo electrónico ${email} ya está asignado al paciente ${pacienteExistenteCorreo.nombre_completo}.`,
+        confirmButtonText: "Aceptar",
+      });
+      return;
+    }
+
     if ([name, phone, email, age, address, birthDate, selectedCivilStatus, selectedDocumentType, selectedGender, selectedNationality].includes('')) {
       Swal.fire({
         icon: "error",
@@ -150,7 +215,7 @@ const AddPatients = () => {
     });
   }
 
-  return (
+  return (  
     <div>
       <Header />
       <Sidebar id="menu-item2" id1="menu-items2" activeClassName="add-patient" />
@@ -263,17 +328,12 @@ const AddPatients = () => {
 
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
-                          <label>
-                            Edad
-                          </label>
+                          <label>Edad</label>
                           <input
                             className="form-control"
                             type="text"
                             value={age}
-                            onChange={(e) => {
-                              setAge(e.target.value);
-                              saveToLocalStorage("age", e.target.value);
-                            }}
+                            readOnly
                           />
                         </div>
                       </div>

@@ -31,6 +31,7 @@
     "apexcharts": "^4.5.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.2",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "feather-icons-react": "^0.6.2",
     "firebase": "^11.6.0",
