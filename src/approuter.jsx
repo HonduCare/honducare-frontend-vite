@@ -90,6 +90,8 @@ import ConsultaItinerario from "./components/patients/ConsultaItinerario";
 //COMPONENTE DE PERMISOS
 import { AdministrarPermisos } from "./components/Administracion/AdministrarPermisos";
 
+import FormularioPaciente from "./components/patients/Formularios/FormularioPaciente";
+
 //Accounts
 const Approuter = () => {
   const BASENAME = '/';
@@ -141,7 +143,7 @@ const Approuter = () => {
           <Route path="/doctor-setting" element={<Doctor_Settings />} />
           {/* Patients */}
           <Route path="/PacienteLista" element={<PatientsList />} />
-          <Route path="/AgregarPaciente" element={<AddPatients />} />
+          <Route path="/AgregarPaciente" element={<FormularioPaciente />} />
           <Route path="/editPaciente/:id" element={<EditPatients />} />
           <Route path="/patientsprofile" element={<PatientsProfile />} />
           <Route path="/patient-settings" element={<Patient_Settings />} />
