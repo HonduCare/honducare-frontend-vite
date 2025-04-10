@@ -44,6 +44,7 @@ const ExpensesReport = () => {
     const url = `${API_URL}/obtener/expediente/${params.id}`;
     try {
       const { data } = await axios.get(url);
+      console.log("Esta es la data del expediente: ", data);
       setExpediente(data);
     } catch (error) {
       console.error(error);

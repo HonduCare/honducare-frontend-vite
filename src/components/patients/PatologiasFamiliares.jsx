@@ -31,7 +31,7 @@ const PatologiasFamiliares = () => {
 
   useEffect(() => {
     // Cargar datos desde el localStorage al montar el componente
-    const storedPatologias = JSON.parse(localStorage.getItem("addedPatologias")) || [];
+    const storedPatologias = JSON.parse(localStorage.getItem("addedPatologias")) ;
     setAddedPatologias(storedPatologias);
 
     // Obtener patologías desde la API

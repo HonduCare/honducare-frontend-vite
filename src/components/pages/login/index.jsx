@@ -48,7 +48,6 @@ const Login = () => {
       }
       if (response.data.autenticated) {
         localStorage.setItem("user", JSON.stringify(response.data.data));
-        localStorage.setItem("token", response.data.token);
         navigate("/Bienvenida");
       } else {
         Swal.fire({
@@ -61,6 +60,7 @@ const Login = () => {
       }
     } catch (error) {
       if (error.response) {
+        
         Swal.fire({
           title: "Error!",
           text:
@@ -70,17 +70,28 @@ const Login = () => {
           timer: 3000,
           showConfirmButton: false,
         });
-      } else if (
-        error.code === "auth/wrong-password" ||
-        error.code === "auth/user-not-found"
-      ) {
-        Swal.fire({
-          title: "Error!",
-          text: "Correo o contraseña incorrectos. Por favor, intente nuevamente.",
-          icon: "error",
-          timer: 3000,
-          showConfirmButton: false,
-        });
+      } else if (error.code === "auth/invalid-credential" ) {
+        const result = await axios.post(`${API_URL}/Verificar/inicio-fallido`,{email});
+       // console.log(result.data);
+        if (result.data.activo === true) {
+          Swal.fire({
+            title: "Contraseña Incorrecta",
+            text: `Te quedan ${result.data.intentos} intentos, luego de eso se bloqueará tu cuenta.`,
+            icon: "error",
+            timer: 3000,
+            showConfirmButton: false,
+          });
+        }else {
+          Swal.fire({
+            title: "Error!",
+            text: `${result.data.message}`,
+            icon: "error",
+            timer: 3000,
+            showConfirmButton: false,
+          });
+        }
+        
+        
       } else {
         Swal.fire({
           title: "Error!",
