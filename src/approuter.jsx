@@ -7,6 +7,7 @@ import Addblog from "./components/pages/Blog/Addblog";
 import Editblog from "./components/pages/Blog/Editblog";
 import BlogView from "./components/pages/Blog/BlogView";
 import Blogdetails from "./components/pages/Blog/Blogdetails";
+import EditarExpediente from "./components/patients/Formularios/EditarExpediente";
 //For Settings...
 // import Settings from "./components/settings/Settings";
 //Assest
@@ -18,14 +19,7 @@ import Bitacora from "./components/Administracion/Bitacora";
 import DoctorProfile from "./components/Administracion/DoctorProfile";
 //Patients...
 import PatientsList from "./components/patients/PatientsList";
-import AddPatients from "./components/patients/AddPatients";
-import EditPatients from "./components/patients/EditPatients";
 import PatientsProfile from "./components/patients/PatientsProfile";
-import PatologiasPersonales from "./components/patients/PatologiasPersonales";
-import PatologiasFamiliares from "./components/patients/PatologiasFamiliares";
-import Antecedentes from "./components/patients/Antecedentes";
-import HabitosToxicos from "./components/patients/HabitosToxicos";
-import HistoriaGinecobstetrica from "./components/patients/HistoriaGinecobstetrica";
 import Citaslist from "./components/appoinments/AppoinmentList";
 import AddAppoinments from "./components/appoinments/AddAppoinments";
 import EditAppoinments from "./components/appoinments/EditAppoinments";
@@ -84,7 +78,6 @@ import EditUsuario from "./components/Administracion/EditUsario";
 import Estadisticas from "./components/Dashboard/Estadisticas/Admin_Dashboard";
 import ListaEspecialidades from "./components/department/ListaEspecialidades";
 import ConsultaExpediente from "./components/Consulta/ConsultaExpediente";
-import ComoSeEntero from "./components/patients/ComoSeEntero";
 import ConsultaItinerario from "./components/patients/ConsultaItinerario";
 
 //COMPONENTE DE PERMISOS
@@ -103,6 +96,8 @@ const Approuter = () => {
   async function getInfo() {
     const usuario = JSON.parse(localStorage.getItem('user'));
     setUsuarioLogged(usuario ? usuario : { id_rol: '5' });
+    console.log("Usuario Loguaedo desde el router",usuarioLogged.id_rol);
+
   }
 
   useEffect(() => {
@@ -144,14 +139,9 @@ const Approuter = () => {
           {/* Patients */}
           <Route path="/PacienteLista" element={<PatientsList />} />
           <Route path="/AgregarPaciente" element={<FormularioPaciente />} />
-          <Route path="/editPaciente/:id" element={<EditPatients />} />
+          <Route path="/editPaciente/:id" element={<EditarExpediente />} />
           <Route path="/patientsprofile" element={<PatientsProfile />} />
           <Route path="/patient-settings" element={<Patient_Settings />} />
-          <Route path="/patologias-personales" element={<PatologiasPersonales />} />
-          <Route path="/patologias-familiares" element={<PatologiasFamiliares />} />
-          <Route path="/antecedentes" element={<Antecedentes />} />
-          <Route path="/habitos-toxicos" element={<HabitosToxicos />} />
-          <Route path="/historia-ginecobstetrica" element={<HistoriaGinecobstetrica />} />
           <Route path="/lista-antecedentes" element={<ListaAntecedentes />} />
           <Route path="/lista-estadocivil" element={<ListaEstadoCivil />} />
           <Route path="/lista-hg" element={<ListaHG />} />
@@ -189,6 +179,8 @@ const Approuter = () => {
               <Route path="/PreclinicaLista" element={<Preclinica />} />
               <Route path="/consulta-itinerario" element={<ConsultaItinerario />} />
               <Route path="/consulta-expediente" element={<ConsultaExpediente />} />
+              <Route path="/EditUsuario/:id" element={<EditUsuario />} />
+              <Route path="/AgregarUsuario" element={<AddUser />} />
             </Route>
           ) : null}
 
@@ -204,7 +196,6 @@ const Approuter = () => {
               <Route path="/ConsultaLista" element={<ScheduleList />} />
               <Route path="/PreclinicaLista" element={<Preclinica />} />
               <Route path="/especialidades" element={<ListaEspecialidades />} />
-              <Route path="/como-se-entero" element={<ComoSeEntero />} />
               <Route path="/consulta-itinerario" element={<ConsultaItinerario />} />
               <Route path="/consulta-expediente" element={<ConsultaExpediente />} />
               <Route path="/permisos-roles" element={<AdministrarPermisos/>} />
@@ -238,8 +229,6 @@ const Approuter = () => {
           <Route path="/examenfisico/:id_cita/:id_paciente" element={<ExamenFisico />} />
           <Route path="/expediente/:id" element={<Expediente />} />
           <Route path="/diagnostico/:id_paciente/:id_cita" element={<Diagnostico />} />
-
-          <Route path="/como-se-entero" element={<ComoSeEntero />} />
 
 
           {/* Department */}
