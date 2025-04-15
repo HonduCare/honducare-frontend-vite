@@ -82,7 +82,7 @@ const Step4 = ({ formData, setFormData }) => {
             <div className="form-group local-forms">
               <button
                 type="button"
-                className="btn btn-primary submit-form mt-4"
+                className="btn btn-primary submit-form"
                 onClick={handleAddHT}
               >
                 Agregar

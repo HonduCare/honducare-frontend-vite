@@ -3,21 +3,23 @@ import Select from "react-select";
 import moment from "moment";
 import axios from "axios";
 
+const documentTypes = [ 
+  { value: 2, label: "Identidad" }
+];
+
+const selectedOption = documentTypes.find((opt) => opt.value === 2);
+
 const Step1 = ({ formData, setFormData, edit  }) => {
   const [genderOptions, setGenderOptions] = useState([]);
   const [civilStatusOptions, setCivilStatusOptions] = useState([]);
   const [occupationOptions, setOccupationOptions] = useState([]);
+
 
   const nationalities = [
     { value: 2, label: "Hondureña" },
     { value: 3, label: "Extranjero" },
   ];
 
-  const documentTypes = [ 
-    { value: 2, label: "Identidad" },
-    { value: 3, label: "Pasaporte" },
-    { value: 4, label: "Licencia" },
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -188,10 +190,11 @@ const Step1 = ({ formData, setFormData, edit  }) => {
           <div className="col-md-4 mb-3">
             <label>Tipo de Documento *</label>
             <Select
-              value={formData.id_documento}
+              value={selectedOption}
               onChange={(value) => handleChange("id_documento", value)}
               options={documentTypes}
               styles={selectStyles}
+              readOnly
             />
           </div>
 

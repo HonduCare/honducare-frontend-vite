@@ -21,7 +21,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -35,8 +34,8 @@ const Login = () => {
           },
         }
       );
-      console.log(response.data);
-      if(response.data.data.estado !== "activo"){
+      if(response.data.data.estado !== "activo" ){
+        localStorage.removeItem("user");
         await signOut(auth);
         Swal.fire({
           title: "Error!",
@@ -45,12 +44,11 @@ const Login = () => {
           timer: 3000,
           showConfirmButton: false,
         });
-        await signOut(auth);
         return;
       }
-      if (response.data.autenticated) {
+      if (response.data.autenticated == true ) {
         localStorage.setItem("user", JSON.stringify(response.data.data));
-        navigate("/Bienvenida");
+        navigate("/Bienvenido");
       } else {
         Swal.fire({
           title: "Error!",
@@ -61,8 +59,7 @@ const Login = () => {
         });
       }
     } catch (error) {
-      if (error.response) {
-        
+      if (error.response) {   
         Swal.fire({
           title: "Error!",
           text:
@@ -74,7 +71,6 @@ const Login = () => {
         });
       } else if (error.code === "auth/invalid-credential" ) {
         const result = await axios.post(`${API_URL}/Verificar/inicio-fallido`,{email});
-       // console.log(result.data);
         if (result.data.activo === true) {
           Swal.fire({
             title: "Contraseña Incorrecta",
@@ -92,8 +88,6 @@ const Login = () => {
             showConfirmButton: false,
           });
         }
-        
-        
       } else {
         Swal.fire({
           title: "Error!",
@@ -110,14 +104,36 @@ const Login = () => {
     width: "100%",
     height: "auto",
   };
-const verificarSesion = () =>{
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      navigate("/Bienvenida");
-     // console.log("Usuario autenticado:", user);
-    }
-  });
-}
+
+  const verificarSesion = () => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        const response = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/Verificar`,
+          { email: user.email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        if (response.data.data.estado !== "activo") {
+          console.log("Usuario autenticado en Firebase pero inactivo en BD");
+          await signOut(auth);
+          localStorage.removeItem("user");
+          navigate("/");
+        } else {
+          console.log("Usuario activo");
+          navigate("/Bienvenido")
+        }
+      } else {
+        console.log("Usuario no autenticado");
+      }
+    });
+  };
+  
  
 useEffect(() => {
   verificarSesion();

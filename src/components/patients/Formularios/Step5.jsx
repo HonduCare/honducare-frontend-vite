@@ -74,7 +74,7 @@ const Step5 = ({ formData, setFormData }) => {
         <h4 className="form-heading mb-4">Historia Ginecobstétrica</h4>
         <div className="row">
           <div className="col-md-6">
-            <div className="form-group">
+            <div className="form-group local-forms">
               <label>Historia</label>
               <Select
                 value={selectedHistoria}

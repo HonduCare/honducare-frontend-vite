@@ -99,7 +99,7 @@ const EditarExpediente = () => {
             : "",
         };
         setFormData(dataFormateada);
-       // console.log("Data formateada:", dataFormateada);
+        console.log("Data formateada:", dataFormateada);
       } catch (err) {
         console.error("Error al cargar el expediente:", err);
         Swal.fire({

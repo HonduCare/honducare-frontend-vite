@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+
 import { useState, useEffect } from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -98,8 +98,7 @@ const Approuter = () => {
   async function getInfo() {
     const usuario = JSON.parse(localStorage.getItem('user'));
     setUsuarioLogged(usuario ? usuario : { id_rol: '5' });
-    console.log("Usuario Loguaedo desde el router",usuarioLogged.id_rol);
-
+    //console.log("Usuario Loguaedo desde el router",usuarioLogged.id_rol);
   }
 
   useEffect(() => {

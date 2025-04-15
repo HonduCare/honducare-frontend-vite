@@ -19,8 +19,6 @@ const AppoinmentList = () => {
   const [search, setSearch] = useState("");
   const [citasFiltradas, setCitasFiltradas] = useState([]);
 
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
-
   function buscarCitaNombre() {
     if (search == "") {
       setCitasFiltradas([]);
@@ -231,7 +229,7 @@ const AppoinmentList = () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/citas`
       );
-      setDatasource(data);
+      setDatasource(data.reverse());
     } catch (error) {
       console.error("Error al obtener las citas:", error);
     }

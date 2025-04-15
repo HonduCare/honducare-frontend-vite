@@ -6,6 +6,8 @@ import FeatherIcon from "feather-icons-react";
 import Select from "react-select";
 import { TextField } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import { Modal, Button } from "antd";
+import Step1 from "../patients/Formularios/Step1";
 import Swal from "sweetalert2";
 import axios from "axios";
 import createAuthHeaders from "../../helpers/createAuthHeaders";
@@ -24,6 +26,22 @@ const AddAppoinments = () => {
   const [disabedNombreTelefono, setDisabedNombreTelefono] = useState(true);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [pacienteSelect, setPacienteSelect] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const [nuevoPacienteData, setNuevoPacienteData] = useState({
+    nombre_completo: "",
+    numero_identidad: numeroIdentidad,
+    correo_electronico: "",
+    telefono: "",
+    id_sexo: null,
+    fecha_nacimiento: "",
+    edad: "",
+    nacionalidad: null,
+    id_documento: { value: 2, label: "Identidad" },
+    id_ocupacion: null,
+    id_estado_civil: null,
+    direccion: "",
+  });
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -69,7 +87,83 @@ const AddAppoinments = () => {
     } else {
       setNombre("");
       setTelefono("");
-      setDisabedNombreTelefono(false);
+      setDisabedNombreTelefono(false); // ya no se usará
+      setShowModal(true); // nuevo estado para mostrar modal
+    }
+  };
+
+  const handleGuardarNuevoPaciente = async () => {
+    const body = {
+      nombre_completo: nuevoPacienteData.nombre_completo,
+      numero_identidad: nuevoPacienteData.numero_identidad,
+      correo_electronico: nuevoPacienteData.correo_electronico,
+      telefono: nuevoPacienteData.telefono,
+      id_sexo: nuevoPacienteData.id_sexo?.value,
+      fecha_nacimiento: nuevoPacienteData.fecha_nacimiento,
+      edad: nuevoPacienteData.edad,
+      nacionalidad: nuevoPacienteData.nacionalidad?.value,
+      id_documento: 2,
+      id_ocupacion: nuevoPacienteData.id_ocupacion?.value,
+      id_estado_civil: nuevoPacienteData.id_estado_civil?.value,
+      direccion: nuevoPacienteData.direccion,
+      patologiasFamiliares: [],
+      patologiasPersonales: [],
+      antecedentesHospitalarios: [],
+      habitosToxicos: [],
+      ginecobstetrica: [],
+      como_se_entero: ""
+    };
+
+    try {
+      const config = await createAuthHeaders();
+
+      Swal.fire({
+        title: "Registrar Paciente?",
+        text: "Esta seguro de registar este nuevo paciente",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si"
+      }).then(async (result) => {
+        const { data } = await axios.post(
+          `${API_URL}/crear/expediente`,
+          body,
+          config
+        );
+        setPacienteSelect(data);
+        setNombre(data.nombre_completo);
+        setTelefono(data.telefono);
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Registro Completo",
+            text: "Se ha registrado al nuevo paciente",
+            icon: "success"
+          });
+
+          await obtenerPacientes();
+          setNuevoPacienteData({
+            nombre_completo: "",
+            numero_identidad: numeroIdentidad,
+            correo_electronico: "",
+            telefono: "",
+            id_sexo: null,
+            fecha_nacimiento: "",
+            edad: "",
+            nacionalidad: null,
+            id_documento: { value: 2, label: "Identidad" },
+            id_ocupacion: null,
+            id_estado_civil: null,
+            direccion: "",
+          })
+        }
+      });
+   
+
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error al guardar paciente:", error);
+      Swal.fire("Error", "No se pudo guardar el paciente", "error");
     }
   };
 
@@ -77,16 +171,11 @@ const AddAppoinments = () => {
     try {
       const config = await createAuthHeaders();
       const url = `${API_URL}/crear/cita`;
-      const fechaUTC = new Date(fecha);
 
       const body = {
         id_paciente: pacienteSelect?.id_paciente,
         id_estado_cita: 1,
-        fecha: `${fechaUTC.getFullYear()}-${fechaUTC.getMonth() + 1}-${
-          fechaUTC.getDate().toString().length === 1
-            ? `0${fechaUTC.getDate()}`
-            : fechaUTC.getDate()
-        }`,
+        fecha: fecha,
         hora: startTime,
         motivo_cita: motivoConsulta,
         nombre: nombre,
@@ -94,7 +183,7 @@ const AddAppoinments = () => {
         numero_identidad: numeroIdentidad,
         id_usuario: parseInt(selectedOption?.value),
       };
-
+      console.log("Nueva cita: ", body)
       await axios.post(url, body, config);
 
       Swal.fire({
@@ -132,18 +221,20 @@ const AddAppoinments = () => {
       }
     };
 
-    const obtenerPacientes = async () => {
-      try {
-        const { data } = await axios.get(`${API_URL}/pacientes/`);
-        setPacientes(data);
-      } catch (error) {
-        console.error("Error al obtener los pacientes:", error);
-      }
-    };
-
+ 
     obtenerPacientes();
     fetchData();
   }, []);
+
+  const obtenerPacientes = async () => {
+    try {
+      const { data } = await axios.get(`${API_URL}/pacientes/`);
+      setPacientes(data);
+    } catch (error) {
+      console.error("Error al obtener los pacientes:", error);
+    }
+  };
+
 
   return (
     <div>
@@ -312,6 +403,30 @@ const AddAppoinments = () => {
             </div>
           </div>
         </div>
+        <Modal
+          title="Registrar nuevo paciente"
+          open={showModal}
+          onCancel={() => setShowModal(false)}
+          footer={[
+            <Button key="cancelar" onClick={() => setShowModal(false)}>
+              Cancelar
+            </Button>,
+            <Button
+              key="guardar"
+              type="primary"
+              onClick={handleGuardarNuevoPaciente}
+            >
+              Guardar
+            </Button>,
+          ]}
+          width={900}
+        >
+          <Step1
+            formData={nuevoPacienteData}
+            setFormData={setNuevoPacienteData}
+            edit={false}
+          />
+        </Modal>
       </div>
     </div>
   );
