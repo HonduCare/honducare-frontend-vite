@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-unused-vars */
 import React from "react";
 import Header from "../../Header";
@@ -9,9 +8,17 @@ import { Table } from "antd";
 import { onShowSizeChange, itemRender } from "../../Pagination";
 import { useState } from "react";
 import { invoicereportdata } from "../../GlobalData/TableData";
-import { imagesend,pdficon,pdficon2,pdficon3,pdficon4,plusicon,refreshicon,searchnormal,} from "../../imagepath";
+import {
+  imagesend,
+  pdficon,
+  pdficon2,
+  pdficon3,
+  pdficon4,
+  plusicon,
+  refreshicon,
+  searchnormal,
+} from "../../imagepath";
 import Select from "react-select";
-import { DatePicker} from "antd";
 const Invoice_Report = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [patient, setPatient] = useState([
@@ -32,7 +39,6 @@ const Invoice_Report = () => {
   const onChange = (date, dateString) => {
     // console.log(date, dateString);
   };
-
 
   const columns = [
     {
@@ -82,34 +88,40 @@ const Invoice_Report = () => {
       ),
     },
     {
-        title: "",
-        dataIndex: "FIELD8",
-        render: (text, record) => (
-          <>
-            <div className="text-end">
-              <div className="dropdown dropdown-action">
-                <Link
-                  to="#"
-                  className="action-icon dropdown-toggle"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i className="fas fa-ellipsis-v" />
+      title: "",
+      dataIndex: "FIELD8",
+      render: (text, record) => (
+        <>
+          <div className="text-end">
+            <div className="dropdown dropdown-action">
+              <Link
+                to="#"
+                className="action-icon dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i className="fas fa-ellipsis-v" />
+              </Link>
+              <div className="dropdown-menu dropdown-menu-end">
+                <Link className="dropdown-item" to="">
+                  <i className="far fa-edit me-2" />
+                  Edit
                 </Link>
-                <div className="dropdown-menu dropdown-menu-end">
-                  <Link className="dropdown-item" to="">
-                    <i className="far fa-edit me-2" />
-                    Edit
-                  </Link>
 
-                  <Link className="dropdown-item" to="#" data-bs-toggle="modal" data-bs-target="#delete_patient">
-                       <i className="fa fa-trash-alt m-r-5"></i> Delete</Link>
-                </div>
+                <Link
+                  className="dropdown-item"
+                  to="#"
+                  data-bs-toggle="modal"
+                  data-bs-target="#delete_patient"
+                >
+                  <i className="fa fa-trash-alt m-r-5"></i> Delete
+                </Link>
               </div>
             </div>
-          </>
-        ),
-      },
+          </div>
+        </>
+      ),
+    },
   ];
   return (
     <>
@@ -189,7 +201,7 @@ const Invoice_Report = () => {
                             <img src={pdficon2} alt="#" />
                           </Link>
                           <Link to="#" className=" me-2">
-                            <img src={pdficon3}alt="#" />
+                            <img src={pdficon3} alt="#" />
                           </Link>
                           <Link to="#">
                             <img src={pdficon4} alt="#" />
@@ -208,53 +220,64 @@ const Invoice_Report = () => {
                                 defaultValue={selectedOption}
                                 onChange={setSelectedOption}
                                 options={patient}
-                                options={patient}  menuPortalTarget={document.body}
-                                styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                menuPortalTarget={document.body}
                                 id="search-commodity"
                                 components={{
-                                  IndicatorSeparator: () => null
+                                  IndicatorSeparator: () => null,
                                 }}
                                 styles={{
                                   control: (baseStyles, state) => ({
                                     ...baseStyles,
-                                    borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                     boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                    '&:hover': {
-                                      borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1);",
+                                    boxShadow: state.isFocused
+                                      ? "0 0 0 1px #2e37a4"
+                                      : "none",
+                                    "&:hover": {
+                                      borderColor: state.isFocused
+                                        ? "none"
+                                        : "2px solid rgba(46, 55, 164, 0.1)",
                                     },
-                                    borderRadius: '10px',
+                                    borderRadius: "10px",
                                     fontSize: "14px",
-                                      minHeight: "45px",
+                                    minHeight: "45px",
                                   }),
                                   dropdownIndicator: (base, state) => ({
                                     ...base,
-                                    transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                    transition: '250ms',
-                                    width: '35px',
-                                    height: '35px',
+                                    transform: state.selectProps.menuIsOpen
+                                      ? "rotate(-180deg)"
+                                      : "rotate(0)",
+                                    transition: "250ms",
+                                    width: "35px",
+                                    height: "35px",
+                                  }),
+                                  menuPortal: (base) => ({
+                                    ...base,
+                                    zIndex: 9999,
                                   }),
                                 }}
                               />
                             </div>
                           </div>
                           <div className="col-12 col-md-6 col-xl-3">
-                            <div className="form-group local-forms cal-icon">
+                            <div className="form-group local-forms">
                               <label>From </label>
-                              <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
-                            />
+                              <input
+                                type="date"
+                                className="form-control"
+                                onChange={(e) => onChange(e.target.value)}
+                              />
                             </div>
                           </div>
                           <div className="col-12 col-md-6 col-xl-3">
-                            <div className="form-group local-forms cal-icon">
+                            <div className="form-group local-forms">
                               <label>To </label>
-                               <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
-                            />
+                              <input
+  type="date"
+  className="form-control"
+  onChange={(e) => onChange(e.target.value)}
+/>
                             </div>
                           </div>
                           <div className="col-12 col-md-6 col-xl-3">
@@ -291,45 +314,60 @@ const Invoice_Report = () => {
               </div>
             </div>
           </div>
-          <div id="delete_patient" className="modal fade delete-modal" role="dialog">
-    <div className="modal-dialog modal-dialog-centered">
-      <div className="modal-content">
-        <div className="modal-body text-center">
-          <img src={imagesend} alt="#" width={50} height={46} />
-          <h3>Are you sure want to delete this ?</h3>
-          <div className="m-t-20">
-            {" "}
-            <Link to="#" className="btn btn-white me-2" data-bs-dismiss="modal">
-              Close
-            </Link>
-
-            <button type="submit" className="btn btn-danger">
-              Delete
-            </button>
+          <div
+            id="delete_patient"
+            className="modal fade delete-modal"
+            role="dialog"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body text-center">
+                  <img src={imagesend} alt="#" width={50} height={46} />
+                  <h3>Are you sure want to delete this ?</h3>
+                  <div className="m-t-20">
+                    {" "}
+                    <Link
+                      to="#"
+                      className="btn btn-white me-2"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </Link>
+                    <button type="submit" className="btn btn-danger">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="delete_patient"
+              className="modal fade delete-modal"
+              role="dialog"
+            >
+              <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                  <div className="modal-body text-center">
+                    <img src={imagesend} alt="#" width={50} height={46} />
+                    <h3>Are you sure want to delete this ?</h3>
+                    <div className="m-t-20">
+                      {" "}
+                      <Link
+                        to="#"
+                        className="btn btn-white"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </Link>
+                      <button type="submit" className="btn btn-danger">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <div id="delete_patient" className="modal fade delete-modal" role="dialog">
-    <div className="modal-dialog modal-dialog-centered">
-      <div className="modal-content">
-        <div className="modal-body text-center">
-          <img src={imagesend} alt="#" width={50} height={46} />
-          <h3>Are you sure want to delete this ?</h3>
-          <div className="m-t-20">
-            {" "}
-            <Link to="#" className="btn btn-white" data-bs-dismiss="modal">
-              Close
-            </Link>
-            <button type="submit" className="btn btn-danger">
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
         </div>
       </>
     </>

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EyeOff, Eye } from "react-feather";
 import { login02, loginlogo } from "../../imagepath";
 import { auth } from "../../../FirebaseConfig.js";
-import { signInWithEmailAndPassword,getIdToken, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword,getIdToken, signOut, onAuthStateChanged  } from "firebase/auth";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -44,6 +45,7 @@ const Login = () => {
           timer: 3000,
           showConfirmButton: false,
         });
+        await signOut(auth);
         return;
       }
       if (response.data.autenticated) {
@@ -104,27 +106,23 @@ const Login = () => {
     }
   };
 
-  {
-    /* const handleChangePassword = () => {
-    if (email) {
-      navigate('/changepassword', { state: { email } }); // Redirige al cambio de contraseña con el email
-    } else {
-      Swal.fire({
-        title: 'Error!',
-        text: 'Por favor, llena tu correo para cambiar la contraseña.',
-        icon: 'error',
-        timer: 3000,
-        showConfirmButton: false,
-      });
-    }
-  };
-  */
-  }
-
   const imageStyle = {
     width: "100%",
     height: "auto",
   };
+const verificarSesion = () =>{
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      navigate("/Bienvenida");
+     // console.log("Usuario autenticado:", user);
+    }
+  });
+}
+ 
+useEffect(() => {
+  verificarSesion();
+}, [])
+
 
   return (
     <>

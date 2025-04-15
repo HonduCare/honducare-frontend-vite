@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
-import { DatePicker } from "antd";
 import FeatherIcon from "feather-icons-react";
 import Select from "react-select";
 import { TextField } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from 'axios';
-import moment from 'moment';  // Importar moment.js
+import axios from "axios";
+import moment from "moment"; // Importar moment.js
 
 const EditAppoinments = () => {
   const [startTime, setStartTime] = useState("");
@@ -19,7 +18,6 @@ const EditAppoinments = () => {
   const [motivoConsulta, setMotivoConsulta] = useState("");
   const [doctores, setDoctores] = useState([]);
   const [fecha, setFecha] = useState(moment());
-  const [citaId, setCitaId] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams(); // Obtener el id de la cita desde la URL
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -28,7 +26,9 @@ const EditAppoinments = () => {
     getDoctores();
     const fetchData = async () => {
       try {
-        const responseCita = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/${id}`);
+        const responseCita = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/${id}`
+        );
         const cita = responseCita.data;
 
         setNombre(cita.paciente.nombre_completo);
@@ -41,14 +41,14 @@ const EditAppoinments = () => {
         // setFecha(moment(new Date()));
         setStartTime(moment(cita.hora, "HH:mm").format("HH:mm"));
 
-        setFecha(cita.fecha.split('T')[0]);
+        setFecha(cita.fecha.split("T")[0]);
         setSelectedOption({
           value: cita.usuario.id_usuario,
           label: cita.usuario.nombre_de_usuario,
         });
       } catch (error) {
-        console.error('Error al cargar la cita:', error);
-        Swal.fire('Error', 'No se pudo cargar la cita', 'error');
+        console.error("Error al cargar la cita:", error);
+        Swal.fire("Error", "No se pudo cargar la cita", "error");
       }
     };
 
@@ -62,7 +62,7 @@ const EditAppoinments = () => {
     try {
       const { data } = await axios(url);
 
-      const doctoresTransformed = data.map(doc => ({
+      const doctoresTransformed = data.map((doc) => ({
         value: doc.id_usuario.toString(),
         label: doc.nombre_de_usuario,
       }));
@@ -71,7 +71,6 @@ const EditAppoinments = () => {
     } catch (error) {
       console.log(error);
     }
-
   }
 
   const handleSave = async () => {
@@ -81,7 +80,11 @@ const EditAppoinments = () => {
     currentDate.setHours(0, 0, 0, 0);
 
     if (selectedDate < currentDate) {
-      Swal.fire("Error", 'La fecha de la nueva cita no puede ser menor a la actual. Verifique', "error");
+      Swal.fire(
+        "Error",
+        "La fecha de la nueva cita no puede ser menor a la actual. Verifique",
+        "error"
+      );
       return;
     }
 
@@ -94,9 +97,16 @@ const EditAppoinments = () => {
 
       // console.log(updatedCita);
 
-      await axios.put(`${import.meta.env.VITE_REACT_APP_API_URL}/actualizar/cita/${id}`, updatedCita);
+      await axios.put(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/actualizar/cita/${id}`,
+        updatedCita
+      );
 
-      Swal.fire("Éxito", "Cita actualizada y reprogramada correctamente", "success");
+      Swal.fire(
+        "Éxito",
+        "Cita actualizada y reprogramada correctamente",
+        "success"
+      );
       navigate("/CitasLista");
     } catch (error) {
       console.error("Error al guardar la cita:", error);
@@ -104,11 +114,14 @@ const EditAppoinments = () => {
     }
   };
 
-
   return (
     <div>
       <Header />
-      <Sidebar id="menu-item4" id1="menu-items4" activeClassName="add-appoinment" />
+      <Sidebar
+        id="menu-item4"
+        id1="menu-items4"
+        activeClassName="add-appoinment"
+      />
       <div className="page-wrapper">
         <div className="content">
           <div className="page-header">
@@ -130,7 +143,12 @@ const EditAppoinments = () => {
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
-                  <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleSave();
+                    }}
+                  >
                     <div className="row">
                       <div className="col-12">
                         <div className="form-heading">
@@ -140,7 +158,9 @@ const EditAppoinments = () => {
 
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
-                          <label>Nombre <span className="login-danger">*</span></label>
+                          <label>
+                            Nombre <span className="login-danger">*</span>
+                          </label>
                           <input
                             className="form-control"
                             type="text"
@@ -152,7 +172,9 @@ const EditAppoinments = () => {
                       </div>
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
-                          <label>Teléfono <span className="login-danger">*</span></label>
+                          <label>
+                            Teléfono <span className="login-danger">*</span>
+                          </label>
                           <input
                             className="form-control"
                             type="text"
@@ -164,7 +186,10 @@ const EditAppoinments = () => {
                       </div>
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
-                          <label>Número de identidad <span className="login-danger">*</span></label>
+                          <label>
+                            Número de identidad{" "}
+                            <span className="login-danger">*</span>
+                          </label>
                           <input
                             className="form-control"
                             type="text"
@@ -181,29 +206,34 @@ const EditAppoinments = () => {
                         </div>
                       </div>
                       <div className="col-12 col-md-6 col-xl-4">
-                        <div className="form-group local-forms cal-icon">
-                          <label>Día <span className="login-danger">*</span></label>
-                          <TextField
+                        <div className="form-group local-forms ">
+                          <label>
+                            Día <span className="login-danger">*</span>
+                          </label>
+                          <input
                             type="date"
-                            className="form-control datetimepicker"
-                            onChange={e => setFecha(e.target.value)}
+                            className="form-control"
+                            onChange={(e) => setFecha(e.target.value)}
                             value={fecha}
                           />
                         </div>
                       </div>
                       <div className="col-12 col-md-6 col-xl-4">
                         <div className="form-group local-forms">
-                          <label>Hora: <span className="login-danger">*</span></label>
-                          <TextField
-                            className="form-control"
+                          <label>
+                            Hora: <span className="login-danger">*</span>
+                          </label>
+                          <input
                             type="time"
+                            className="form-control"
                             value={startTime}
-                            onChange={(event) => setStartTime(event.target.value)}
+                            onChange={(event) =>
+                              setStartTime(event.target.value)
+                            }
                           />
                         </div>
                       </div>
-                      <div className="col-12 col-md-6 col-xl-4">
-                      </div>
+                      <div className="col-12 col-md-6 col-xl-4"></div>
 
                       <div className="col-12 col-md-6 col-xl-6">
                         <div className="form-group local-forms">
@@ -218,7 +248,10 @@ const EditAppoinments = () => {
 
                       <div className="col-10 col-sm-10">
                         <div className="form-group local-forms">
-                          <label>Motivo de Consulta <span className="login-danger">*</span></label>
+                          <label>
+                            Motivo de Consulta{" "}
+                            <span className="login-danger">*</span>
+                          </label>
                           <textarea
                             className="form-control"
                             rows={3}
@@ -256,5 +289,3 @@ const EditAppoinments = () => {
 };
 
 export default EditAppoinments;
-
-

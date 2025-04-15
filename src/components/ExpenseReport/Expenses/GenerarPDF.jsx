@@ -14,13 +14,15 @@ const formatDate = () => {
 };
 
 export const generarReportePDF = async (data) => {
+
+  console.log("Data entrante: ", data)
   // Crear contenedor oculto
   const container = document.createElement("div");
   container.style.position = "absolute";
   container.style.left = "-9999px";
-  container.style.width = "210mm";
-  container.style.height = "297mm";
-  container.style.padding = "20mm";
+  container.style.width = "210mm"; // Ancho A4
+  container.style.minHeight = "279mm";
+  container.style.padding = "10mm"
   container.style.background = "#ffffff";
   container.style.fontFamily = "Arial, sans-serif";
   container.style.color = "#000000";
@@ -44,157 +46,201 @@ export const generarReportePDF = async (data) => {
       </div>
 
       <!-- Datos Generales -->
-      <div style="margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
-  <h2 style="font-size: 13pt; margin: 0 0 10px 0;">Datos Generales</h2>
-  <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Nombre:</strong> ${data.paciente.nombre_completo}
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Edad:</strong> ${data.paciente.edad} años
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Sexo:</strong> ${data.paciente.tbl_sexo.descripcion}
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Teléfono:</strong> ${data.paciente.telefono}
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Dirección:</strong> ${data.paciente.direccion}
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Correo Electrónico:</strong> ${data.paciente.correo_electronico}
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Estado Civil:</strong> ${data.paciente.tbl_estado_civil.descripcion}
-    </div>
-    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
-      <strong>Ocupación:</strong> ${data.paciente.tbl_ocupacion.descripcion}
-    </div>
-  </div>
-</div>
+      ${generateSection("Datos Generales", generateGeneralData(data.paciente))}
 
       <!-- Historia Familiar Patológica -->
-      <h2 style="font-size: 13pt; margin-bottom: 10px;">Historia Familiar Patológica</h2>
-      <table style="width: 100%; margin-bottom: 25px; border-collapse: collapse;">
-        <thead>
-          <tr style="background: #f8f9fa;">
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Patología</th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Parentesco</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${
-            data.patologiasFamiliares.length > 0
-              ? data.patologiasFamiliares
-                  .map(
-                    (pato) => `
-                    <tr>
-                      <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${pato.patologia.descripcion || "No disponible"}</td>
-                      <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${pato.parentesco || "No disponible"}</td>
-                    </tr>
-                  `
-                  )
-                  .join("")
-              : `<tr><td colspan="2" style="text-align: center; padding: 12px;">No hay datos disponibles</td></tr>`
-          }
-        </tbody>
-      </table>
+      ${generateSection(
+        "Historia Familiar Patológica",
+        generateTable(data.patologiasFamiliares, ["Patología", "Parentesco"], ["patologia.descripcion", "parentesco"])
+      )}
 
       <!-- Historia Personal Patológica -->
-      <h2 style="font-size: 13pt; margin-bottom: 10px;">Historia Personal Patológica</h2>
-      ${
-        data.patologiasPersonales.length > 0
-          ? data.patologiasPersonales
-              .map(
-                (patologia) => `
-                <div style="margin-bottom: 10px;">
-                  <p style="font-size: 11pt; margin: 5px 0;">Patología: ${patologia.tbl_patologia.descripcion || "No disponible"}</p>
-                  <p style="font-size: 11pt; margin: 5px 0;">Medicamentos: ${patologia.medicamentos || "Ninguno"}</p>
-                  <p style="font-size: 11pt; margin: 5px 0;">Dosis: ${patologia.dosis || "No disponible"}</p>
-                  <p style="font-size: 11pt; margin: 5px 0;">Horario: ${patologia.horario || "No disponible"}</p>
-                </div>
-              `
-              )
-              .join("")
-          : `<p style="text-align: center;">No hay datos disponibles</p>`
-      }
+      ${generateSection(
+        "Historia Personal Patológica",
+        generateTable(data.patologiasPersonales, ["Patología", "Medicamentos", "Dosis", "Horario"], [
+          "tbl_patologia.descripcion",
+          "medicamentos",
+          "dosis",
+          "horario",
+        ])
+      )}
 
       <!-- Antecedentes -->
-      <h2 style="font-size: 13pt; margin-bottom: 10px;">Antecedentes</h2>
-      ${
-        data.antecedentes.length > 0
-          ? data.antecedentes
-              .map(
-                (antecedente) => `
-                <p style="font-size: 11pt; margin: 5px 0;">Nombre: ${antecedente.tbl_descripcion_antecedente.descripcion || "No disponible"}</p>
-              `
-              )
-              .join("")
-          : `<p style="text-align: center;">No hay datos disponibles</p>`
-      }
+      ${generateSection(
+        "Antecedentes",
+        generateTable(data.antecedentes, ["Antecedente", "Descripcion"], ["descripcion_antecedente", "descripcion"]),
+      )}
 
       <!-- Hábitos Tóxicos -->
-      <h2 style="font-size: 13pt; margin-bottom: 10px;">Hábitos Tóxicos</h2>
-      ${
-        data.habitosToxicos.length > 0
-          ? data.habitosToxicos
-              .map(
-                (habito) => `
-                <p style="font-size: 11pt; margin: 5px 0;">Nombre: ${habito.tbl_descripcion_habito.descripcion || "No disponible"}</p>
-              `
-              )
-              .join("")
-          : `<p style="text-align: center;">No hay datos disponibles</p>`
-      }
+      ${generateSection(
+        "Hábitos Tóxicos",
+        generateList(data.habitosToxicos, "descripcion")
+      )}
 
       <!-- Historia Ginecobstétrica -->
       ${
         data.paciente.tbl_sexo.descripcion !== "Masculino"
-          ? `
-          <h2 style="font-size: 13pt; margin-bottom: 10px;">Historia Ginecobstétrica</h2>
-          ${
-            data.historiaGineco.length > 0
-              ? data.historiaGineco
-                  .map(
-                    (historia) => `
-                    <p style="font-size: 11pt; margin: 5px 0;">Nombre: ${historia.tbl_descripcion_ginecoobstretica.descripcion || "No disponible"}</p>
-                  `
-                  )
-                  .join("")
-              : `<p style="text-align: center;">No hay datos disponibles</p>`
-          }
-        `
+          ? generateSection(
+              "Historia Ginecobstétrica",
+              generateTable(data.historiaGineco, ["Historia", "Cantidad"], ["descripcion", "cantidad"]),
+            )
           : ""
       }
     </div>
   `;
 
   try {
-    // Convertir a imagen
+    await new Promise((resolve) => {
+      const img = container.querySelector("img");
+      if (!img) return resolve();
+      if (img.complete) return resolve();
+      img.onload = resolve;
+      img.onerror = resolve;
+    });
+  
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
-      logging: false,
-      width: 794,
-      height: 1123,
-      windowWidth: 794,
-      windowHeight: 1123,
       backgroundColor: "#ffffff",
     });
-
-    // Generar PDF
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
-
-    pdf.addImage(canvas, "JPEG", 0, 0, 210, 297);
+  
+    const pdf = new jsPDF("p", "mm", "a4");
+  
+    const pageWidth = 210;
+    const pageHeight = 297;
+  
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+  
+    const imgWidth = pageWidth;
+    const pxPerMm = canvasWidth / pageWidth;
+    const pageHeightPx = pxPerMm * pageHeight;
+  
+    let renderedHeight = 0;
+    let pageIndex = 0;
+  
+    while (renderedHeight < canvasHeight) {
+      const sliceHeight = Math.min(pageHeightPx, canvasHeight - renderedHeight);
+  
+      if (sliceHeight <= 0) break; // evita pasar height = 0
+  
+      const pageCanvas = document.createElement("canvas");
+      pageCanvas.width = canvasWidth;
+      pageCanvas.height = sliceHeight;
+  
+      const context = pageCanvas.getContext("2d");
+      context.drawImage(
+        canvas,
+        0,
+        renderedHeight,
+        canvasWidth,
+        sliceHeight,
+        0,
+        0,
+        canvasWidth,
+        sliceHeight
+      );
+  
+      const imgData = pageCanvas.toDataURL("image/jpeg", 1.0);
+  
+      if (pageIndex > 0) pdf.addPage();
+      const sliceHeightMm = sliceHeight / pxPerMm;
+  
+      pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, sliceHeightMm);
+  
+      renderedHeight += sliceHeight;
+      pageIndex++;
+    }
+  
     pdf.save(`Reporte-${data.paciente.nombre_completo}.pdf`);
   } catch (error) {
     console.error("Error generando PDF:", error);
   } finally {
     document.body.removeChild(container);
   }
+};
+
+// Función para generar una sección
+const generateSection = (title, content) => {
+  return `
+    <div style="margin-bottom: 30px;">
+      <h2 style="font-size: 13pt; margin-bottom: 10px;">${title}</h2>
+      ${content}
+    </div>
+  `;
+};
+
+// Función para generar datos generales
+const generateGeneralData = (paciente) => {
+  return `
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      ${generateDataRow("Nombre", paciente.nombre_completo)}
+      ${generateDataRow("Edad", `${paciente.edad} años`)}
+      ${generateDataRow("Sexo", paciente.tbl_sexo.descripcion)}
+      ${generateDataRow("Teléfono", paciente.telefono)}
+      ${generateDataRow("Dirección", paciente.direccion)}
+      ${generateDataRow("Correo Electrónico", paciente.correo_electronico)}
+      ${generateDataRow("Estado Civil", paciente.tbl_estado_civil.descripcion)}
+      ${generateDataRow("Ocupación", paciente.tbl_ocupacion.descripcion)}
+    </div>
+  `;
+};
+
+// Función para generar una fila de datos
+const generateDataRow = (label, value) => {
+  return `
+    <div style="flex: 1 1 45%; font-size: 11pt; margin: 5px 0;">
+      <strong>${label}:</strong> ${value || "No disponible"}
+    </div>
+  `;
+};
+
+// Función para generar una tabla
+const generateTable = (data, headers, keys) => {
+  if (!data || data.length === 0) {
+    return `<p style="text-align: center;">No hay datos disponibles</p>`;
+  }
+
+  const headerRow = headers
+    .map((header) => `<th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">${header}</th>`)
+    .join("");
+
+  const bodyRows = data
+    .map((item) => {
+      const row = keys
+        .map((key) => {
+          const value = key.split(".").reduce((acc, curr) => acc && acc[curr], item);
+          return `<td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${value || "No disponible"}</td>`;
+        })
+        .join("");
+      return `<tr>${row}</tr>`;
+    })
+    .join("");
+
+  return `
+    <table style="width: 100%; margin-bottom: 25px; border-collapse: collapse;">
+      <thead>
+        <tr style="background: #f8f9fa;">
+          ${headerRow}
+        </tr>
+      </thead>
+      <tbody>
+        ${bodyRows}
+      </tbody>
+    </table>
+  `;
+};
+
+// Función para generar una lista
+const generateList = (data, key) => {
+  if (!data || data.length === 0) {
+    return `<p style="text-align: center;">No hay datos disponibles</p>`;
+  }
+
+  return data
+    .map((item) => {
+      const value = key.split(".").reduce((acc, curr) => acc && acc[curr], item);
+      return `<p style="font-size: 11pt; margin: 5px 0;">${value || "No disponible"}</p>`;
+    })
+    .join("");
 };

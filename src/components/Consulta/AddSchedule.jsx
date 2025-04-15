@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react'
-import Header from '../Header';
-import Sidebar from '../Sidebar';
-import { DatePicker } from 'antd';
-import { TextField } from '@mui/material';
-import FeatherIcon from 'feather-icons-react/build/FeatherIcon';
+import React, { useState } from "react";
+import Header from "../Header";
+import Sidebar from "../Sidebar";
+import { TextField } from "@mui/material";
+import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import Select from "react-select";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-
 
 const AddSchedule = () => {
   const [startTime, setStartTime] = useState();
@@ -38,7 +36,11 @@ const AddSchedule = () => {
   return (
     <div>
       <Header />
-      <Sidebar id='menu-item5' id1='menu-items5' activeClassName='add-shedule' />
+      <Sidebar
+        id="menu-item5"
+        id1="menu-items5"
+        activeClassName="add-shedule"
+      />
       <>
         <div className="page-wrapper">
           <div className="content">
@@ -75,7 +77,8 @@ const AddSchedule = () => {
                         <div className="col-12 col-md-6 col-xl-6">
                           <div className="form-group local-forms">
                             <label>
-                              Nombre Paciente <span className="login-danger">*</span>
+                              Nombre Paciente{" "}
+                              <span className="login-danger">*</span>
                             </label>
                             <input className="form-control" type="text" />
                           </div>
@@ -83,7 +86,8 @@ const AddSchedule = () => {
                         <div className="col-12 col-md-6 col-xl-6">
                           <div className="form-group local-forms">
                             <label>
-                              Especialidad <span className="login-danger">*</span>
+                              Especialidad{" "}
+                              <span className="login-danger">*</span>
                             </label>
                             <Select
                               defaultValue={selectedOption}
@@ -91,29 +95,40 @@ const AddSchedule = () => {
                               options={options}
                               menuPortalTarget={document.body}
                               styles={{
-                                menuPortal: base => ({ ...base, zIndex: 9999 }),
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                  boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
                                   minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                             />
                             {/* <select className="form-control select">
@@ -125,17 +140,16 @@ const AddSchedule = () => {
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-4">
-                          <div className="form-group local-forms cal-icon">
+                          <div className="form-group local-forms">
                             <label>
-                              Día de cita <span className="login-danger">*</span>
+                              Día de cita{" "}
+                              <span className="login-danger">*</span>
                             </label>
-                            <DatePicker className="form-control datetimepicker" onChange={onChange}
-                              suffixIcon={null}
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => onChange(e.target.value)}
                             />
-                            {/* <input
-                        className="form-control datetimepicker"
-                        type="text"
-                      /> */}
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-4">
@@ -145,11 +159,6 @@ const AddSchedule = () => {
                             </label>
 
                             <div className="">
-                              {/* <input
-                          type="text"
-                          className="form-control"
-                          id="datetimepicker3"
-                        />  */}
                               <TextField
                                 className="form-control"
                                 id="outlined-controlled"
@@ -223,7 +232,7 @@ const AddSchedule = () => {
                         </div>
                         <div className="col-12">
                           <div className="doctor-submit text-end">
-                            <Link to="/AgregarConsulta" >
+                            <Link to="/AgregarConsulta">
                               <button
                                 type="button"
                                 className="btn btn-primary submit-form me-2"
@@ -250,7 +259,7 @@ const AddSchedule = () => {
         </div>
       </>
     </div>
-  )
-}
+  );
+};
 
 export default AddSchedule;

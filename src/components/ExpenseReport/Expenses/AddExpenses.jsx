@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Header from "../../Header";
 import Sidebar from "../../Sidebar";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
-import { DatePicker} from "antd";
 import Select from "react-select";
 import { Link } from "react-router-dom";
 
@@ -21,7 +20,7 @@ const AddExpenses = () => {
     { value: 3, label: "Debit Card" },
     { value: 4, label: "Pay Pal " },
   ]);
-  const [purchased,setPurchased ] = useState([
+  const [purchased, setPurchased] = useState([
     { value: 2, label: "Bernardo James" },
     { value: 3, label: "Galaviz Lalema" },
     { value: 4, label: "Tarah Williams" },
@@ -44,7 +43,7 @@ const AddExpenses = () => {
                 <div className="col-sm-12">
                   <ul className="breadcrumb">
                     <li className="breadcrumb-item">
-                    <Link to="/expense-Report">Accounts </Link>
+                      <Link to="/expense-Report">Accounts </Link>
                     </li>
                     <li className="breadcrumb-item">
                       <i className="feather-chevron-right">
@@ -94,16 +93,15 @@ const AddExpenses = () => {
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-6">
-                          <div className="form-group local-forms cal-icon">
+                          <div className="form-group local-forms">
                             <label>
                               Purchase Date{" "}
                               <span className="login-danger">*</span>
                             </label>
-                            <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
-                              // placeholder='24/11/2022'
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => onChange(e.target.value)}
                             />
                           </div>
                         </div>
@@ -119,26 +117,34 @@ const AddExpenses = () => {
                               options={purchased}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
@@ -167,32 +173,40 @@ const AddExpenses = () => {
                               options={paymentMethod}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
                           </div>
                         </div>
-                       
+
                         <div className="col-12 col-md-6 col-xl-6">
                           <div className="form-group local-forms">
                             <label>
@@ -205,26 +219,34 @@ const AddExpenses = () => {
                               options={status}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />

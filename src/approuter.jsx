@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/pages/login";
+import { Perfil } from "./components/pages/login/Perfil";
 // import config from "config";
 import Addblog from "./components/pages/Blog/Addblog";
 import Editblog from "./components/pages/Blog/Editblog";
@@ -62,7 +64,6 @@ import ChangePassword from "./components/pages/login/ChangePassword";
 import Error from "./components/pages/login/Error";
 import ServerError from "./components/pages/login/ServerError";
 import Calender from "./components/appoinments/Calender";
-import Profile from "./components/pages/login/Profile";
 import EditProfile from "./components/pages/login/EditProfile";
 import BlankPage from "./components/pages/login/BlankPage";
 import Doctor_Dashboard from "./components/Dashboard/Doctor_Dashboard/Doctor_Dashboard";
@@ -82,6 +83,7 @@ import ConsultaItinerario from "./components/patients/ConsultaItinerario";
 
 //COMPONENTE DE PERMISOS
 import { AdministrarPermisos } from "./components/Administracion/AdministrarPermisos";
+import { DatabaseAdmin } from "./components/Administracion/DatabaseAdmin";
 
 import FormularioPaciente from "./components/patients/Formularios/FormularioPaciente";
 
@@ -113,8 +115,8 @@ const Approuter = () => {
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
+          <Route path="/perfil" element={<Perfil />} />
           <Route path="/register" element={<Register />} />
           <Route path="/lockscreen" element={<LockScreen />} />
           <Route path="/changepassword" element={<ChangePassword />} />
@@ -163,7 +165,6 @@ const Approuter = () => {
               <Route path={'/Calendario'} element={<Calender />} />
               <Route path="/AgregarCita" element={<AddAppoinments />} />
               <Route path="/AgregarConsulta" element={<AddSchedule />} />
-              <Route path="/perfil" element={<DoctorProfile />} />
               <Route path="/consulta-expediente" element={<ConsultaExpediente />} />
             </Route>
           ) : null}
@@ -199,6 +200,7 @@ const Approuter = () => {
               <Route path="/consulta-itinerario" element={<ConsultaItinerario />} />
               <Route path="/consulta-expediente" element={<ConsultaExpediente />} />
               <Route path="/permisos-roles" element={<AdministrarPermisos/>} />
+              <Route path="/admin-database" element={<DatabaseAdmin/>}/>
             </Route>
           ) : null}
 

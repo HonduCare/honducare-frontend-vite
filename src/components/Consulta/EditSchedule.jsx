@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
-import { DatePicker} from "antd";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import { TextField } from "@mui/material";
 import Select from "react-select";
@@ -13,11 +12,10 @@ const EditSchedule = () => {
   const [endTime, setEndTime] = useState();
   const [selectedOption, setSelectedOption] = useState(null);
   const [options, setOptions] = useState([
-    { value: 1, label: "Select Department"},
+    { value: 1, label: "Select Department" },
     { value: 2, label: "Cardiology" },
     { value: 3, label: "Uriology" },
   ]);
-
 
   //const[show,setShow]=useState(false)
   const onChange = (date, dateString) => {
@@ -88,37 +86,42 @@ const EditSchedule = () => {
                               options={options}
                               menuPortalTarget={document.body}
                               styles={{
-                                menuPortal: base => ({ ...base, zIndex: 9999 }),
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                  boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
                                   minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                             />
-                            {/* <select className="form-control select">
-                              <option>Choose Department</option>
-                              <option>Cardiology</option>
-                              <option>Urology</option>
-                              <option>Radiology</option>
-                            </select> */}
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-4">
@@ -127,16 +130,11 @@ const EditSchedule = () => {
                               Available Days{" "}
                               <span className="login-danger">*</span>
                             </label>
-                            <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => onChange(e.target.value)}
                             />
-                            {/* <input
-                        className="form-control datetimepicker"
-                        type="text"
-                        defaultValue="28-11-22"
-                      /> */}
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-4">
@@ -163,7 +161,7 @@ const EditSchedule = () => {
                               To <span className="login-danger">*</span>
                             </label>
                             <div className="">
-                            <TextField
+                              <TextField
                                 className="form-control"
                                 id="outlined-controlled"
                                 type="time"
@@ -254,7 +252,6 @@ const EditSchedule = () => {
             </div>
           </div>
         </div>
-
       </>
     </div>
   );

@@ -3,13 +3,12 @@ import React, { useState } from "react";
 import Header from "../../Header";
 import Sidebar from "../../Sidebar";
 import { imguser } from "../../imagepath";
-import { DatePicker} from "antd";
 import Select from "react-select";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import { Link } from "react-router-dom";
 
 const EditProfile = () => {
-    const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState(null);
   const [gender, setGender] = useState([
     { value: 1, label: "Select Gender" },
     { value: 2, label: "Male" },
@@ -32,12 +31,12 @@ const EditProfile = () => {
                 <div className="col-sm-12">
                   <ul className="breadcrumb">
                     <li className="breadcrumb-item">
-                     <Link to="#">Dashboard </Link>
+                      <Link to="#">Dashboard </Link>
                     </li>
                     <li className="breadcrumb-item">
                       <i className="feather-chevron-right">
-                        <FeatherIcon icon="chevron-right"/>
-                        </i>
+                        <FeatherIcon icon="chevron-right" />
+                      </i>
                     </li>
                     <li className="breadcrumb-item active">Edit Profile</li>
                   </ul>
@@ -83,11 +82,11 @@ const EditProfile = () => {
                           <div className="form-group local-forms ">
                             <label className="focus-label">Birth Date</label>
                             <div className="cal-icon">
-                            <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
-                            />
+                              <input
+                                type="date"
+                                className="form-control"
+                                onChange={(e) => onChange(e.target.value)}
+                              />
                             </div>
                           </div>
                         </div>
@@ -187,25 +186,23 @@ const EditProfile = () => {
                   <div className="col-md-6">
                     <div className="form-group local-forms">
                       <label className="focus-label">Starting Date</label>
-                      <div className="cal-icon">
-                        <DatePicker
-                          className="form-control datetimepicker"
-                          onChange={onChange}
-                          suffixIcon={null}
-                        />
-                      </div>
+
+                      <input
+                        type="date"
+                        className="form-control"
+                        onChange={(e) => onChange(e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="form-group local-forms">
                       <label className="focus-label">Complete Date</label>
-                      <div className="cal-icon">
-                        <DatePicker
-                          className="form-control datetimepicker"
-                          onChange={onChange}
-                          suffixIcon={null}
-                        />
-                      </div>
+
+                      <input
+                        type="date"
+                        className="form-control"
+                        onChange={(e) => onChange(e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="col-md-6">
@@ -230,7 +227,7 @@ const EditProfile = () => {
                   </div>
                 </div>
                 <div className="add-more">
-                 <Link to="#" className="btn btn-primary">
+                  <Link to="#" className="btn btn-primary">
                     <i className="fa fa-plus" /> Add More Institute
                   </Link>
                 </div>
@@ -271,30 +268,26 @@ const EditProfile = () => {
                   <div className="col-md-6">
                     <div className="form-group local-forms">
                       <label className="focus-label">Period From</label>
-                      <div className="cal-icon">
-                        <DatePicker
-                          className="form-control datetimepicker"
-                          onChange={onChange}
-                          suffixIcon={null}
-                        />
-                      </div>
+                      <input
+                        type="date"
+                        className="form-control"
+                        onChange={(e) => onChange(e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="col-md-6">
                     <div className="form-group local-forms">
                       <label className="focus-label">Period To</label>
-                      <div className="cal-icon">
-                        <DatePicker
-                          className="form-control datetimepicker"
-                          onChange={onChange}
-                          suffixIcon={null}
-                        />
-                      </div>
+                      <input
+                        type="date"
+                        className="form-control"
+                        onChange={(e) => onChange(e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
                 <div className="add-more">
-                 <Link to="#" className="btn btn-primary">
+                  <Link to="#" className="btn btn-primary">
                     <i className="fa fa-plus" /> Add More Experience
                   </Link>
                 </div>
@@ -314,7 +307,7 @@ const EditProfile = () => {
               <div className="drop-scroll msg-list-scroll" id="msg_list">
                 <ul className="list-box">
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">R</span>
@@ -331,7 +324,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item new-message">
                         <div className="list-left">
                           <span className="avatar">J</span>
@@ -348,7 +341,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">T</span>
@@ -368,7 +361,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">M</span>
@@ -385,7 +378,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">C</span>
@@ -405,7 +398,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">D</span>
@@ -425,7 +418,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">B</span>
@@ -445,7 +438,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">R</span>
@@ -465,7 +458,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">C</span>
@@ -482,7 +475,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">M</span>
@@ -499,7 +492,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">J</span>
@@ -516,7 +509,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">L</span>
@@ -533,7 +526,7 @@ const EditProfile = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">T</span>
@@ -554,7 +547,7 @@ const EditProfile = () => {
                 </ul>
               </div>
               <div className="topnav-dropdown-footer">
-               <Link to="#">See all messages</Link>
+                <Link to="#">See all messages</Link>
               </div>
             </div>
           </div>

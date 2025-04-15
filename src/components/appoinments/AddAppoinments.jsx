@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
-import { DatePicker } from "antd";
 import FeatherIcon from "feather-icons-react";
 import Select from "react-select";
 import { TextField } from "@mui/material";
@@ -56,13 +55,13 @@ const AddAppoinments = () => {
   // Buscar paciente por número de identidad
   const searchPaciente = () => {
     if (numeroIdentidad.length < 7) return;
-  
+
     // Buscar en el hook de pacientes
     const pacienteEncontrado = pacientes.find(
       (paciente) => paciente.numero_identidad === numeroIdentidad
     );
     setPacienteSelect(pacienteEncontrado);
-  
+
     if (pacienteEncontrado) {
       setNombre(pacienteEncontrado.nombre_completo || "");
       setTelefono(pacienteEncontrado.telefono || "");
@@ -93,10 +92,10 @@ const AddAppoinments = () => {
         nombre: nombre,
         telefono: telefono,
         numero_identidad: numeroIdentidad,
-        id_usuario: parseInt( selectedOption?.value),
+        id_usuario: parseInt(selectedOption?.value),
       };
 
-       await axios.post(url, body, config);
+      await axios.post(url, body, config);
 
       Swal.fire({
         icon: "success",
@@ -238,15 +237,15 @@ const AddAppoinments = () => {
                         </div>
                       </div>
                       <div className="col-12 col-md-6 col-xl-4">
-                        <div className="form-group local-forms cal-icon">
+                        <div className="form-group local-forms">
                           <label>
                             Día <span className="login-danger">*</span>
                           </label>
-                          <DatePicker
-                            className="form-control datetimepicker"
-                            onChange={setFecha}
+                          <input
+                            type="date"
+                            className="form-control"
+                            onChange={(e) => setFecha(e.target.value)}
                             value={fecha}
-                            suffixIcon={null}
                           />
                         </div>
                       </div>

@@ -5,7 +5,6 @@ import Sidebar from "../../Sidebar";
 import { Link } from "react-router-dom";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import { favicon } from "../../imagepath";
-import { DatePicker } from "antd";
 
 const Edit_Expenses = () => {
   const [show, setShow] = useState(false);
@@ -82,10 +81,10 @@ const Edit_Expenses = () => {
                               Purchase Date{" "}
                               <span className="login-danger">*</span>
                             </label>
-                            <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => onChange(e.target.value)}
                               placeholder="24/11/2022"
                             />
                           </div>

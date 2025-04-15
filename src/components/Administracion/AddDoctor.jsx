@@ -1,11 +1,9 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
-import { DatePicker} from "antd";
 import Select from "react-select";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 const AddDoctor = () => {
   const [isClicked, setIsClicked] = useState(false);
@@ -54,7 +52,7 @@ const AddDoctor = () => {
                 <div className="col-sm-12">
                   <ul className="breadcrumb">
                     <li className="breadcrumb-item">
-                     <Link to="#">Doctors </Link>
+                      <Link to="#">Doctors </Link>
                     </li>
                     <li className="breadcrumb-item">
                       <i className="feather-chevron-right">
@@ -169,12 +167,14 @@ const AddDoctor = () => {
                               Date Of Birth{" "}
                               <span className="login-danger">*</span>
                             </label>
-                            <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => onChange(e.target.value)}
                               style={{
-                                borderColor: isClicked ? '#2E37A4' : '2px solid rgba(46, 55, 164, 0.1)',
+                                borderColor: isClicked
+                                  ? "#2E37A4"
+                                  : "rgba(46, 55, 164, 0.1)",
                               }}
                             />
                           </div>
@@ -242,30 +242,37 @@ const AddDoctor = () => {
                               options={department}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
-
                           </div>
                         </div>
                         <div className="col-12 col-sm-12">
@@ -287,35 +294,41 @@ const AddDoctor = () => {
                               City <span className="login-danger">*</span>
                             </label>
                             <Select
-                              menuPosition={'fixed'}
+                              menuPosition={"fixed"}
                               defaultValue={selectedOption}
                               onChange={setSelectedOption}
                               options={options}
                               menuPortalTarget={document.body}
-                              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                              id="search-commodity"
-                              components={{
-                                IndicatorSeparator: () => null
-                              }}
-
                               styles={{
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
@@ -327,39 +340,48 @@ const AddDoctor = () => {
                               Country <span className="login-danger">*</span>
                             </label>
                             <Select
-                              menuPosition={'fixed'}
+                              menuPosition={"fixed"}
                               defaultValue={selectedOption}
                               onChange={setSelectedOption}
                               options={option}
                               menuPortalTarget={document.body}
-                              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                              id="search-commodity"
-                              components={{
-                                IndicatorSeparator: () => null
-                              }}
-
                               styles={{
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
+                              id="search-commodity"
+                              components={{
+                                IndicatorSeparator: () => null,
+                              }}
                             />
-
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-3">
@@ -369,39 +391,48 @@ const AddDoctor = () => {
                               <span className="login-danger">*</span>
                             </label>
                             <Select
-                              menuPosition={'fixed'}
+                              menuPosition={"fixed"}
                               defaultValue={selectedOption}
                               onChange={setSelectedOption}
                               options={options}
                               menuPortalTarget={document.body}
-                              styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-                              id="search-commodity"
-                              components={{
-                                IndicatorSeparator: () => null
-                              }}
-
                               styles={{
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
+                              id="search-commodity"
+                              components={{
+                                IndicatorSeparator: () => null,
+                              }}
                             />
-
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-3">
@@ -445,23 +476,10 @@ const AddDoctor = () => {
                                 onChange={loadFile}
                                 className="hide-input"
                               />
-                                <label htmlFor="file" className="upload">
-                                Choose File
-                              </label>
-                            </div>
-                            {/* <div className="settings-btn upload-files-avator">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                name="image"
-                                id="file"
-                                onchange="loadFile(event)"
-                                className="hide-input"
-                              />
                               <label htmlFor="file" className="upload">
                                 Choose File
                               </label>
-                            </div> */}
+                            </div>
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-6">
@@ -522,7 +540,7 @@ const AddDoctor = () => {
               <div className="drop-scroll msg-list-scroll" id="msg_list">
                 <ul className="list-box">
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">R</span>
@@ -539,7 +557,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item new-message">
                         <div className="list-left">
                           <span className="avatar">J</span>
@@ -556,7 +574,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">T</span>
@@ -576,7 +594,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">M</span>
@@ -593,7 +611,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">C</span>
@@ -613,7 +631,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">D</span>
@@ -633,7 +651,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">B</span>
@@ -653,7 +671,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">R</span>
@@ -673,7 +691,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">C</span>
@@ -690,7 +708,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">M</span>
@@ -707,7 +725,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">J</span>
@@ -724,7 +742,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">L</span>
@@ -741,7 +759,7 @@ const AddDoctor = () => {
                     </Link>
                   </li>
                   <li>
-                   <Link to="#">
+                    <Link to="#">
                       <div className="list-item">
                         <div className="list-left">
                           <span className="avatar">T</span>
@@ -762,12 +780,11 @@ const AddDoctor = () => {
                 </ul>
               </div>
               <div className="topnav-dropdown-footer">
-               <Link to="#">See all messages</Link>
+                <Link to="#">See all messages</Link>
               </div>
             </div>
           </div>
         </div>
-
       </>
     </div>
   );

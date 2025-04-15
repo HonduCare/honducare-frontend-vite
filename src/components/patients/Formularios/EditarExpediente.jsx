@@ -42,7 +42,7 @@ const EditarExpediente = () => {
         const res = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/expediente/${id}`);
         const expediente = res.data;
   
-        //console.log("Datos del expediente:", expediente);
+        console.log("Datos del expediente:", expediente);
   
         // Mapear los datos del expediente al formato esperado
         const dataFormateada= {

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, Select } from 'antd';
 import { Link } from 'react-router-dom';

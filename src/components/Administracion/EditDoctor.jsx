@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Header from "../Header";
@@ -6,9 +5,7 @@ import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
 import { favicon, imagesend } from "../imagepath";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
-import { DatePicker } from "antd";
 import Select from "react-select";
-
 
 const EditDoctor = () => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -174,15 +171,12 @@ const EditDoctor = () => {
                               <span className="login-danger">*</span>
                             </label>
 
-                            <DatePicker
-                              className="form-control datetimepicker"
-                              onChange={onChange}
-                              suffixIcon={null}
-                              // placeholder='24/11/2022'
+                            <input
+                              type="date"
+                              className="form-control"
+                              onChange={(e) => onChange(e.target.value)}
+                              placeholder="24/11/2022"
                             />
-
-
-
                           </div>
                         </div>
                         <div className="col-12 col-md-6 col-xl-6">
@@ -249,26 +243,34 @@ const EditDoctor = () => {
                               options={department}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
@@ -303,37 +305,43 @@ const EditDoctor = () => {
                             </label>
                             <Select
                               menuPortalTarget={document.body}
-                              styles={{
-                                menuPortal: (base) => ({
-                                  ...base,
-                                  zIndex: 9999,
-                                }),
-                              }}
                               defaultValue={selectedOption}
                               onChange={setSelectedOption}
                               options={options}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
@@ -346,37 +354,43 @@ const EditDoctor = () => {
                             </label>
                             <Select
                               menuPortalTarget={document.body}
-                              styles={{
-                                menuPortal: (base) => ({
-                                  ...base,
-                                  zIndex: 9999,
-                                }),
-                              }}
                               defaultValue={selectedOption}
                               onChange={setSelectedOption}
                               options={option}
                               id="search-commodity"
                               components={{
-                                IndicatorSeparator: () => null
+                                IndicatorSeparator: () => null,
                               }}
                               styles={{
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
@@ -394,34 +408,41 @@ const EditDoctor = () => {
                               onChange={setSelectedOption}
                               options={statevalue}
                               menuPortalTarget={document.body}
+                              
+                              id="search-commodity"
+                              components={{
+                                IndicatorSeparator: () => null,
+                              }}
                               styles={{
                                 menuPortal: (base) => ({
                                   ...base,
                                   zIndex: 9999,
                                 }),
-                              }}
-                              id="search-commodity"
-                              components={{
-                                IndicatorSeparator: () => null
-                              }}
-                              styles={{
                                 control: (baseStyles, state) => ({
                                   ...baseStyles,
-                                  borderColor: state.isFocused ?'none' : '2px solid rgba(46, 55, 164, 0.1);',
-                                   boxShadow: state.isFocused ? '0 0 0 1px #2e37a4' : 'none',
-                                  '&:hover': {
-                                    borderColor: state.isFocused ? 'none' : '2px solid rgba(46, 55, 164, 0.1)',
+                                  borderColor: state.isFocused
+                                    ? "none"
+                                    : "2px solid rgba(46, 55, 164, 0.1);",
+                                  boxShadow: state.isFocused
+                                    ? "0 0 0 1px #2e37a4"
+                                    : "none",
+                                  "&:hover": {
+                                    borderColor: state.isFocused
+                                      ? "none"
+                                      : "2px solid rgba(46, 55, 164, 0.1)",
                                   },
-                                  borderRadius: '10px',
+                                  borderRadius: "10px",
                                   fontSize: "14px",
-                                    minHeight: "45px",
+                                  minHeight: "45px",
                                 }),
                                 dropdownIndicator: (base, state) => ({
                                   ...base,
-                                  transform: state.selectProps.menuIsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                                  transition: '250ms',
-                                  width: '35px',
-                                  height: '35px',
+                                  transform: state.selectProps.menuIsOpen
+                                    ? "rotate(-180deg)"
+                                    : "rotate(0)",
+                                  transition: "250ms",
+                                  width: "35px",
+                                  height: "35px",
                                 }),
                               }}
                             />
@@ -470,7 +491,7 @@ const EditDoctor = () => {
                                 onChange={loadFile}
                                 className="hide-input"
                               />
-                               <label htmlFor="file" className="upload">
+                              <label htmlFor="file" className="upload">
                                 Choose File
                               </label>
                             </div>

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { generarReportePDF } from "./GenerarPDF";
 //import jsPDF from "jspdf";
-import { Row, Col, Table } from "antd";
+import { Row, Col, List, Table } from "antd";
 //import html2canvas from "html2canvas";
 import FullColorHorizontal from "../../../assets/img/FullColorHorizontal.png";
 import { useParams } from "react-router-dom";
@@ -20,25 +20,6 @@ const ExpensesReport = () => {
     setShowPrint(false);
     await window.print();
   };
-
-{/*  const handleExportPDF = () => {
-    const input = reportRef.current;
-
-    html2canvas(input, {
-      useCORS: true,
-      scale: 2,
-    })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-        pdf.addImage(imgData, "png", 10, 10, pdfWidth - 20, pdfHeight - 20);
-        pdf.save("expenses_report.pdf");
-      })
-      .catch((err) => console.error("Error generating PDF", err));
-  };*/}
 
   async function getExpediente() {
     const url = `${API_URL}/obtener/expediente/${params.id}`;
@@ -117,8 +98,8 @@ const ExpensesReport = () => {
       <br />
       <div ref={reportRef}>
         {/* Datos Generales */}
-        <div className="mb-4">
-          <h2 className="text-center mb-4">Datos Generales</h2>
+        <div className="mb-4 mt-4">
+          <h2 className="mb-4">Datos Generales</h2>
           <Row gutter={[0, 10]}>
             <Col xs={24} sm={12}>
               <p>
@@ -187,88 +168,104 @@ const ExpensesReport = () => {
 
         {/* Historia Familiar Patológica */}
         <h2>Historia Familiar Patológica</h2>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ border: "1px solid black", padding: "5px" }}>
-                Patología
-              </th>
-              <th style={{ border: "1px solid black", padding: "5px" }}>
-                Parentesco
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {expediente?.patologiasFamiliares?.length > 0 ? (
-              expediente.patologiasFamiliares.map((pato, index) => (
-                <tr key={index}>
-                  <td style={{ border: "1px solid black", padding: "5px" }}>
-                    {pato?.patologia?.descripcion || "No disponible"}
-                  </td>
-                  <td style={{ border: "1px solid black", padding: "5px" }}>
-                    {pato?.parentesco || "No disponible"}
+        <div className="table-responsive">
+          <table className="table table-bordered">
+            <thead className="thead-light">
+              <tr>
+                <th>Patología</th>
+                <th>Parentesco</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expediente?.patologiasFamiliares?.length > 0 ? (
+                expediente.patologiasFamiliares.map((pato, index) => (
+                  <tr key={index}>
+                    <td>{pato?.patologia?.descripcion || "No disponible"}</td>
+                    <td>{pato?.parentesco || "No disponible"}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="2" className="text-center">
+                    No hay datos disponibles
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" style={{ textAlign: "center" }}>
-                  No hay datos disponibles
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
         <br />
 
         {/* Historia Personal Patológica */}
         <h2>Historia Personal Patológica</h2>
         {expediente?.patologiasPersonales?.length > 0 ? (
-          expediente.patologiasPersonales.map((patologia, index) => (
-            <div key={index}>
-              <p>
-                Patología:{" "}
-                {patologia?.tbl_patologia?.descripcion || "No disponible"}
-              </p>
-              <p>Medicamentos: {patologia?.medicamentos || "Ninguno"}</p>
-              <p>Dosis: {patologia?.dosis || "No disponible"}</p>
-              <p>Horario: {patologia?.horario || "No disponible"}</p>
-            </div>
-          ))
+          <div className="table-responsive">
+            <table className="table table-bordered">
+              <thead className="thead-light">
+                <tr>
+                  <th>Patología</th>
+                  <th>Medicamentos</th>
+                  <th>Dosis</th>
+                  <th>Horario</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expediente.patologiasPersonales.map((patologia, index) => (
+                  <tr key={index}>
+                    <td>
+                      {patologia?.patologia?.descripcion || "No disponible"}
+                    </td>
+                    <td>{patologia?.medicamentos || "Ninguno"}</td>
+                    <td>{patologia?.dosis || "No disponible"}</td>
+                    <td>
+                      {patologia?.horario
+                        ? new Date(
+                            `1970-01-01T${patologia.horario}`
+                          ).toLocaleTimeString("es-ES", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : "No disponible"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <p>No hay datos disponibles</p>
         )}
         <br />
 
-        {/* Antecedentes */}
-        <h2>Antecedentes</h2>
         {expediente?.antecedentes?.length > 0 ? (
-          expediente.antecedentes.map((antecedente, index) =>
-            antecedente.tbl_descripcion_antecedente ? (
-              <p key={index}>
-                Nombre: {antecedente.tbl_descripcion_antecedente.descripcion}
-              </p>
-            ) : (
-              <p>No hay datos disponibles</p>
-            )
-          )
+          <List
+            header={<h3>Antecedentes</h3>}
+            bordered
+            dataSource={expediente.antecedentes}
+            renderItem={(antecedente) => (
+              <List.Item>
+                <strong>{antecedente.descripcion_antecedente}:</strong>{" "}
+                {antecedente.descripcion || "No disponible"}
+              </List.Item>
+            )}
+          />
         ) : (
           <p>No hay datos disponibles</p>
         )}
         <br />
 
-        {/* Hábitos Tóxicos */}
-        <h2>Hábitos Tóxicos</h2>
         {expediente.habitosToxicos?.length > 0 ? (
-          expediente.habitosToxicos.map((habito, index) =>
-            habito.tbl_descripcion_habito ? (
-              <p key={index}>
-                Nombre: {habito.tbl_descripcion_habito.descripcion}
-              </p>
-            ) : (
-              <p>No hay datos disponibles</p>
-            )
-          )
+          <List
+            header={<h3>Hábitos Tóxicos</h3>}
+            bordered
+            dataSource={expediente.habitosToxicos}
+            renderItem={(habito) => (
+              <List.Item>
+                <strong>Descripción:</strong>{" "}
+                {habito.descripcion || "No disponible"}
+              </List.Item>
+            )}
+          />
         ) : (
           <p>No hay datos disponibles</p>
         )}
@@ -277,18 +274,17 @@ const ExpensesReport = () => {
         {/* Historia Ginecobstétrica */}
         {expediente?.paciente?.tbl_sexo?.descripcion !== "Masculino" && (
           <>
-            <h2>Historia Ginecobstétrica</h2>
             {expediente?.historiaGineco?.length > 0 ? (
-              expediente.historiaGineco.map((historia, index) =>
-                historia.tbl_descripcion_ginecoobstretica ? (
-                  <p key={index}>
-                    Nombre:{" "}
-                    {historia.tbl_descripcion_ginecoobstretica.descripcion}
-                  </p>
-                ) : (
-                  <p>No hay datos disponibles</p>
-                )
-              )
+              <List
+                header={<h3>Historia Ginecobstétrica</h3>}
+                bordered
+                dataSource={expediente.historiaGineco}
+                renderItem={(historia) => (
+                  <List.Item>
+                    <strong>{historia.descripcion}:</strong> {historia.cantidad}
+                  </List.Item>
+                )}
+              />
             ) : (
               <p>No hay datos disponibles</p>
             )}
@@ -298,33 +294,46 @@ const ExpensesReport = () => {
 
       {showPrint && (
         <div style={{ marginTop: "20px", textAlign: "right" }}>
-          <button
-            type="button"
-            onClick={() => generarReportePDF(expediente)}
-            style={{
-              color: "#FFF",
-              marginRight: "10px",
-              padding: "10px 20px",
-              fontSize: "16px",
-              cursor: "pointer",
-            }}
-          >
-            Exportar a PDF
-          </button>
-
-          <button
-            type="button"
-            className="no-print btn-secondary"
-            onClick={handlePrint}
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              cursor: "pointer",
-            }}
-          >
-            Imprimir
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => generarReportePDF(expediente)}
+          style={{
+            backgroundColor: "#874695",
+            color: "#FFF",
+            border: "none",
+            borderRadius: "5px",
+            marginRight: "10px",
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#874699")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#874695")}
+        >
+          Exportar a PDF
+        </button>
+      
+        <button
+          type="button"
+          className="no-print btn-secondary"
+          onClick={handlePrint}
+          style={{
+            backgroundColor: "#6c757d",
+            color: "#FFF",
+            border: "none",
+            borderRadius: "5px",
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: "pointer",
+            transition: "background-color 0.3s ease",
+          }}
+          onMouseOver={(e) => (e.target.style.backgroundColor = "#5a6268")}
+          onMouseOut={(e) => (e.target.style.backgroundColor = "#6c757d")}
+        >
+          Imprimir
+        </button>
+      </div>
       )}
     </div>
   );

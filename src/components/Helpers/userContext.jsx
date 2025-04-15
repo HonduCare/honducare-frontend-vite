@@ -8,7 +8,7 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem("user"));
-    setUsuarioLogged(usuario ? usuario : { id_rol: "5" }); // Rol por defecto: Paciente
+    setUsuarioLogged(usuario ? usuario : { id_rol: "5" });
   }, []);
 
   const updateUser = (user) => {
@@ -16,8 +16,13 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(user));
   };
 
+  const reloadUser = () => {
+    const usuario = JSON.parse(localStorage.getItem("user"));
+    setUsuarioLogged(usuario ? usuario : { id_rol: "5" });
+  };
+
   return (
-    <UserContext.Provider value={{ usuarioLogged, updateUser }}>
+    <UserContext.Provider value={{ usuarioLogged, updateUser, reloadUser }}>
       {children}
     </UserContext.Provider>
   );
