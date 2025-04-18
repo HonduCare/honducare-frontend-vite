@@ -26,7 +26,7 @@ const EditarExpediente = () => {
     id_sexo: null,
     nacionalidad: null,
     id_estado_civil: null,
-    id_documento: null,
+    id_documento: { value: 2, label: "Identidad" },
     id_ocupacion: null,
     patologiasFamiliares: [],
     patologiasPersonales: [],

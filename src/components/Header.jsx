@@ -36,6 +36,7 @@ const Header = () => {
 
     try {
       const { data } = await axios(url);
+      console.log("Citas itinerario: ",data)
       setCitas(data.citas);
     } catch (error) {
       console.log(error);

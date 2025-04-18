@@ -4,7 +4,7 @@ import { onShowSizeChange, itemRender } from '../Pagination';
 import { Link } from 'react-router-dom';
 import Header from '../Header';
 import Sidebar from '../Sidebar';
-import { searchnormal, plusicon, refreshicon, pdficon, pdficon2, pdficon3, pdficon4 } from '../imagepath';
+//import { searchnormal, plusicon, refreshicon, pdficon, pdficon2, pdficon3, pdficon4 } from '../imagepath';
 import axios from 'axios';
 import { formatearFecha } from '../../helpers';
 
@@ -104,9 +104,9 @@ const BitacoraList = () => {
                   <div className="page-table-header mb-2">
                     <div className="row align-items-center">
                       <div className="col">
-                        <div className="doctor-table-blk">
+                        <div className="doctor-table-blk mb-4 mt-2">
                           <h3>Acciones Realizadas por los usuarios</h3>
-                          <div className="doctor-search-blk">
+                         {/* <div className="doctor-search-blk">
                             <div className="top-nav-search table-search-blk">
                               <form>
                                 <input
@@ -136,10 +136,10 @@ const BitacoraList = () => {
                                 <img src={refreshicon} alt="#" />
                               </Link>
                             </div>
-                          </div>
+                          </div>*/}
                         </div>
                       </div>
-                      <div className="col-auto text-end float-end ms-auto download-grp">
+                     {/* <div className="col-auto text-end float-end ms-auto download-grp">
                         <Link to="#" className=" me-2">
                           <img src={pdficon} alt="#" />
                         </Link>
@@ -152,7 +152,7 @@ const BitacoraList = () => {
                         <Link to="#">
                           <img src={pdficon4} alt="" />
                         </Link>
-                      </div>
+                      </div>*/}
                     </div>
                   </div>
                   {/* /Table Header */}

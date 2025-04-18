@@ -25,13 +25,18 @@ const Preclinica = () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/hoy/today`
       ); // Ruta de tu API
-      console.log(data);
+      let citasFiltradas = data;
+      if (usuarioLogged.rol.rol === "Doctor") {
+        citasFiltradas = data.filter(
+          (cita) => cita.id_usuario === usuarioLogged.id_usuario
+        );
+      }
       setMensaje("");
       if (data.mensaje) {
         setMensaje(mensaje);
         return;
       }
-      setDatasource(data);
+      setDatasource(citasFiltradas);
     } catch (error) {
       console.error("Error al cargar los datos: ", error);
     }

@@ -111,7 +111,7 @@ const AddAppoinments = () => {
       antecedentesHospitalarios: [],
       habitosToxicos: [],
       ginecobstetrica: [],
-      como_se_entero: ""
+      como_se_entero: "",
     };
 
     try {
@@ -124,7 +124,7 @@ const AddAppoinments = () => {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Si"
+        confirmButtonText: "Si",
       }).then(async (result) => {
         const { data } = await axios.post(
           `${API_URL}/crear/expediente`,
@@ -138,7 +138,7 @@ const AddAppoinments = () => {
           Swal.fire({
             title: "Registro Completo",
             text: "Se ha registrado al nuevo paciente",
-            icon: "success"
+            icon: "success",
           });
 
           await obtenerPacientes();
@@ -155,10 +155,9 @@ const AddAppoinments = () => {
             id_ocupacion: null,
             id_estado_civil: null,
             direccion: "",
-          })
+          });
         }
       });
-   
 
       setShowModal(false);
     } catch (error) {
@@ -183,7 +182,7 @@ const AddAppoinments = () => {
         numero_identidad: numeroIdentidad,
         id_usuario: parseInt(selectedOption?.value),
       };
-      console.log("Nueva cita: ", body)
+      console.log("Nueva cita: ", body);
       await axios.post(url, body, config);
 
       Swal.fire({
@@ -221,7 +220,6 @@ const AddAppoinments = () => {
       }
     };
 
- 
     obtenerPacientes();
     fetchData();
   }, []);
@@ -234,7 +232,6 @@ const AddAppoinments = () => {
       console.error("Error al obtener los pacientes:", error);
     }
   };
-
 
   return (
     <div>
@@ -262,6 +259,30 @@ const AddAppoinments = () => {
             </div>
           </div>
           <div className="row">
+            <Modal
+              title="Registrar nuevo paciente"
+              open={showModal}
+              onCancel={() => setShowModal(false)}
+              footer={[
+                <Button key="cancelar" onClick={() => setShowModal(false)}>
+                  Cancelar
+                </Button>,
+                <Button
+                  key="guardar"
+                  type="primary"
+                  onClick={handleGuardarNuevoPaciente}
+                >
+                  Guardar
+                </Button>,
+              ]}
+              width={900}
+            >
+              <Step1
+                formData={nuevoPacienteData}
+                setFormData={setNuevoPacienteData}
+                edit={false}
+              />
+            </Modal>
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
@@ -403,30 +424,6 @@ const AddAppoinments = () => {
             </div>
           </div>
         </div>
-        <Modal
-          title="Registrar nuevo paciente"
-          open={showModal}
-          onCancel={() => setShowModal(false)}
-          footer={[
-            <Button key="cancelar" onClick={() => setShowModal(false)}>
-              Cancelar
-            </Button>,
-            <Button
-              key="guardar"
-              type="primary"
-              onClick={handleGuardarNuevoPaciente}
-            >
-              Guardar
-            </Button>,
-          ]}
-          width={900}
-        >
-          <Step1
-            formData={nuevoPacienteData}
-            setFormData={setNuevoPacienteData}
-            edit={false}
-          />
-        </Modal>
       </div>
     </div>
   );

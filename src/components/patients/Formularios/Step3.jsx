@@ -11,6 +11,7 @@ const Step3 = ({ formData, setFormData }) => {
     const fetchAntecedentes = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/antecedentes/antecedente`);
+        console.log("antecendentesobtenidos: ", res)
         setAntecedentes(
           res.data.map((a) => ({
             value: a.id_descripcion_antecedente,
@@ -73,6 +74,7 @@ const Step3 = ({ formData, setFormData }) => {
                 onChange={setSelectedAntecedente}
                 options={filteredAntecedentes} // Usar la lista filtrada
                 components={{ IndicatorSeparator: () => null }}
+                className="form-form-control"
               />
             </div>
           </div>

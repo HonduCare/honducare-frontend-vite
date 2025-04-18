@@ -25,6 +25,8 @@ const Step6 = ({ formData, setFormData, onSubmit }) => {
     como_se_entero,
   } = formData;
 
+  console.log(formData)
+
   const OPCIONES = [
     { value: "Redes Sociales", label: "Redes Sociales" },
     { value: "Por un Familiar", label: "Por un Familiar" },
@@ -98,7 +100,7 @@ const Step6 = ({ formData, setFormData, onSubmit }) => {
                 <strong>Estado Civil:</strong> {id_estado_civil?.label}
               </p>
               <p>
-                <strong>Tipo de Documento:</strong> {id_documento?.label}
+                <strong>Tipo de Documento:</strong> {id_documento?.value}
               </p>
               <p>
                 <strong>Ocupación:</strong> {id_ocupacion?.label}

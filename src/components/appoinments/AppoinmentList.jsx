@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useContext } from "react";
 import { UserContext } from "../Helpers/userContext";
 import { Table } from "antd";
@@ -229,7 +230,13 @@ const AppoinmentList = () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/citas`
       );
-      setDatasource(data.reverse());
+      let citasFiltradas = data
+      if (usuarioLogged.rol.rol === "Doctor") {
+        citasFiltradas = data.filter(
+          (cita) => cita.id_usuario === usuarioLogged.id_usuario
+        );
+      }
+      setDatasource(citasFiltradas.reverse());
     } catch (error) {
       console.error("Error al obtener las citas:", error);
     }

@@ -143,7 +143,7 @@ const FormularioPaciente = () => {
         fecha_nacimiento: formData.fecha_nacimiento,
         edad: formData.edad,
         nacionalidad: formData.nacionalidad?.label,
-        id_documento: formData.id_documento?.value,
+        id_documento: { value: 2, label: "Identidad" },
         id_estado_civil: formData.id_estado_civil?.value,
         id_sexo: formData.id_sexo?.value,
         id_ocupacion: formData.id_ocupacion?.value,

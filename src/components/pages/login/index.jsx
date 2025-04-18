@@ -120,12 +120,12 @@ const Login = () => {
         );
   
         if (response.data.data.estado !== "activo") {
-          console.log("Usuario autenticado en Firebase pero inactivo en BD");
+         // console.log("Usuario autenticado en Firebase pero inactivo en BD");
           await signOut(auth);
           localStorage.removeItem("user");
           navigate("/");
         } else {
-          console.log("Usuario activo");
+         // console.log("Usuario activo");
           navigate("/Bienvenido")
         }
       } else {

@@ -13,7 +13,6 @@ const Diagnostico = () => {
   const { usuarioLogged } = useContext(UserContext);
   const navigate = useNavigate();
   const params = useParams();
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL; // Obtiene la URL base desde el .env
   const [isLoading, setIsLoading] = useState(true);
 
   const [paciente, setPaciente] = useState({
@@ -91,13 +90,14 @@ const Diagnostico = () => {
       params.id_cita
     }`;
 
-    const [pacienteResponse, preclinicaResponse, citaResponse] =
+    try {
+      const [pacienteResponse, preclinicaResponse, citaResponse] =
       await Promise.all([
-        axios(urlPaciente),
-        axios(urlPreclinica),
-        axios(urlCita),
+        axios.get(urlPaciente),
+        axios.get(urlPreclinica),
+        axios.get(urlCita),
       ]);
-
+      console.log("Datos del paciente: ",pacienteResponse)
     setPaciente(pacienteResponse.data);
     setCita(citaResponse.data);
 
@@ -106,6 +106,13 @@ const Diagnostico = () => {
     if (preclinicaResponse.data.length > 0) {
       setSignosVitales(preclinicaResponse.data[0]);
     }
+    } catch (error) {
+      console.error("Error al obtener los datos: ", error)
+    }finally{
+      setIsLoading(false);
+
+    }
+    
   }
 
   useEffect(() => {
@@ -113,8 +120,8 @@ const Diagnostico = () => {
   }, []);
 
   return isLoading ? (
-    <div class="d-flex justify-content-center">
-      <div class="spinner-border text-primary" role="status"></div>{" "}
+    <div className="d-flex justify-content-center">
+      <div className="spinner-border text-primary" role="status"></div>{" "}
     </div>
   ) : (
     <div>
@@ -164,7 +171,7 @@ const Diagnostico = () => {
                             </label>
                             <input
                               className="form-control"
-                              value={paciente.nombre_completo}
+                              value={paciente.paciente.nombre_completo}
                               readOnly
                               disabled
                             />
@@ -178,7 +185,7 @@ const Diagnostico = () => {
                             </label>
                             <input
                               className="form-control"
-                              value={paciente.numero_identidad}
+                              value={paciente.paciente.numero_identidad}
                               disabled
                               readOnly
                             />
@@ -193,7 +200,7 @@ const Diagnostico = () => {
                             <input
                               className="form-control"
                               value={
-                                paciente.edad ? paciente.edad : "No asignada"
+                                paciente.paciente.edad ? paciente.paciente.edad : "No asignada"
                               }
                               disabled
                               readOnly

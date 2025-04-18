@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "../Helpers/userContext";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
@@ -17,28 +18,14 @@ import axios from 'axios';
 import { formatearFecha } from '../../helpers';
 
 const Consulta = () => {
+  const {usuarioLogged} = useContext(UserContext);
   const [citasHoy, setCitasHoy] = useState([]);
   const [mensaje, setMensaje] = useState('');
-
-  const [usuarioLogged, setUsuarioLogged] = useState({
-    id_rol: '3',
-  });
-
-  async function getInfo() {
-    const usuario = JSON.parse(localStorage.getItem('user'));
-    setUsuarioLogged(usuario ? usuario : { id_rol: '3' });
-    console.log(usuarioLogged.id_usuario);
-  }
-
-
-  const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
-
-
 
   async function obtenerCitasDelDia() {
     try {
       const { data } = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/hoy/today?id_estado_cita=3&id_doctor=${usuarioLogged.id_rol == 3 ? '*' : usuarioLogged.id_usuario}`);
-
+      console.log("Lista Citaas: ", data)
       setMensaje('');
       if (data.mensaje) {
         setMensaje(data.mensaje);
@@ -54,7 +41,6 @@ const Consulta = () => {
 
 
   useEffect(() => {
-    getInfo();
     obtenerCitasDelDia();
   }, []);
 

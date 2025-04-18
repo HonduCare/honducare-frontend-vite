@@ -76,8 +76,8 @@ const ExamenFisico = () => {
         talla,
         glucometria,
       };
-
-      const { data } = await axios.post(url, body, config);
+      console.log("Datos de preclinica: ", body)
+       const { data } = await axios.post(url, body, config);
       console.log(data);
       Swal.fire({
         icon: "success",
@@ -93,15 +93,13 @@ const ExamenFisico = () => {
   }
 
   async function getPaciente() {
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/pacientes/${
-      params.id_paciente
-    }`;
-
+    console.log("Id del paciente;", params.id_paciente)
+    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/expediente/${params.id_paciente}`;
     try {
       const { data } = await axios(url);
-      setNombre(data.nombre_completo);
-      setIdentidad(data.numero_identidad);
-      setEdad(data.edad ? data.edad : "No definida");
+      setNombre(data.paciente.nombre_completo);
+      setIdentidad(data.paciente.numero_identidad);
+      setEdad(data.paciente.edad ? data.paciente.edad : "No definida");
     } catch (error) {
       console.log(error);
     }
