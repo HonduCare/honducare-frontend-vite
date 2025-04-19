@@ -23,7 +23,6 @@ const AddAppoinments = () => {
   const [numeroIdentidad, setNumeroIdentidad] = useState("");
   const [motivoConsulta, setMotivoConsulta] = useState("");
   const [fecha, setFecha] = useState(null);
-  const [disabedNombreTelefono, setDisabedNombreTelefono] = useState(true);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [pacienteSelect, setPacienteSelect] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -45,8 +44,12 @@ const AddAppoinments = () => {
 
   const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-  // Validar si todos los campos están llenos
   useEffect(() => {
+    setNuevoPacienteData((prevData) => ({
+      ...prevData,
+      numero_identidad: numeroIdentidad,
+    }));
+  
     if (
       numeroIdentidad &&
       nombre &&
@@ -69,12 +72,11 @@ const AddAppoinments = () => {
     startTime,
     selectedOption,
   ]);
+  
 
-  // Buscar paciente por número de identidad
   const searchPaciente = () => {
-    if (numeroIdentidad.length < 7) return;
+    if (numeroIdentidad.length < 13) return;
 
-    // Buscar en el hook de pacientes
     const pacienteEncontrado = pacientes.find(
       (paciente) => paciente.numero_identidad === numeroIdentidad
     );
@@ -83,12 +85,10 @@ const AddAppoinments = () => {
     if (pacienteEncontrado) {
       setNombre(pacienteEncontrado.nombre_completo || "");
       setTelefono(pacienteEncontrado.telefono || "");
-      setDisabedNombreTelefono(true);
     } else {
       setNombre("");
       setTelefono("");
-      setDisabedNombreTelefono(false); // ya no se usará
-      setShowModal(true); // nuevo estado para mostrar modal
+      setShowModal(true);
     }
   };
 
@@ -101,7 +101,7 @@ const AddAppoinments = () => {
       id_sexo: nuevoPacienteData.id_sexo?.value,
       fecha_nacimiento: nuevoPacienteData.fecha_nacimiento,
       edad: nuevoPacienteData.edad,
-      nacionalidad: nuevoPacienteData.nacionalidad?.value,
+      nacionalidad: nuevoPacienteData.nacionalidad?.label,
       id_documento: 2,
       id_ocupacion: nuevoPacienteData.id_ocupacion?.value,
       id_estado_civil: nuevoPacienteData.id_estado_civil?.value,
@@ -113,35 +113,38 @@ const AddAppoinments = () => {
       ginecobstetrica: [],
       como_se_entero: "",
     };
-
+  
     try {
       const config = await createAuthHeaders();
-
+  
       Swal.fire({
         title: "Registrar Paciente?",
-        text: "Esta seguro de registar este nuevo paciente",
+        text: "¿Está seguro de registrar este nuevo paciente?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Si",
+        confirmButtonText: "Sí",
       }).then(async (result) => {
-        const { data } = await axios.post(
-          `${API_URL}/crear/expediente`,
-          body,
-          config
-        );
-        setPacienteSelect(data);
-        setNombre(data.nombre_completo);
-        setTelefono(data.telefono);
         if (result.isConfirmed) {
+          const { data } = await axios.post(
+            `${API_URL}/crear/expediente`,
+            body,
+            config
+          );
+          setNumeroIdentidad(data.numero_identidad);
+          setNombre(data.nombre_completo);
+          setTelefono(data.telefono);
+  
           Swal.fire({
-            title: "Registro Completo",
+            title: "Registro completo",
             text: "Se ha registrado al nuevo paciente",
             icon: "success",
           });
-
+  
           await obtenerPacientes();
+          
+          searchPaciente()
           setNuevoPacienteData({
             nombre_completo: "",
             numero_identidad: numeroIdentidad,
@@ -155,17 +158,16 @@ const AddAppoinments = () => {
             id_ocupacion: null,
             id_estado_civil: null,
             direccion: "",
-          });
+          })
+          setShowModal(false);
         }
       });
-
-      setShowModal(false);
     } catch (error) {
       console.error("Error al guardar paciente:", error);
       Swal.fire("Error", "No se pudo guardar el paciente", "error");
     }
   };
-
+  
   const createCita = async () => {
     try {
       const config = await createAuthHeaders();
@@ -219,7 +221,6 @@ const AddAppoinments = () => {
         console.error("Error al cargar doctores:", error);
       }
     };
-
     obtenerPacientes();
     fetchData();
   }, []);
@@ -259,30 +260,6 @@ const AddAppoinments = () => {
             </div>
           </div>
           <div className="row">
-            <Modal
-              title="Registrar nuevo paciente"
-              open={showModal}
-              onCancel={() => setShowModal(false)}
-              footer={[
-                <Button key="cancelar" onClick={() => setShowModal(false)}>
-                  Cancelar
-                </Button>,
-                <Button
-                  key="guardar"
-                  type="primary"
-                  onClick={handleGuardarNuevoPaciente}
-                >
-                  Guardar
-                </Button>,
-              ]}
-              width={900}
-            >
-              <Step1
-                formData={nuevoPacienteData}
-                setFormData={setNuevoPacienteData}
-                edit={false}
-              />
-            </Modal>
             <div className="col-sm-12">
               <div className="card">
                 <div className="card-body">
@@ -309,8 +286,17 @@ const AddAppoinments = () => {
                             className="form-control"
                             type="text"
                             value={numeroIdentidad}
-                            onChange={(e) => setNumeroIdentidad(e.target.value)}
+                            onChange={(e) => {
+                              const input = e.target.value;
+                              if (/^\d{0,13}$/.test(input)) {
+                                setNumeroIdentidad(input);
+                              }
+                            }}
+                            onKeyUp={searchPaciente}
                             onBlur={searchPaciente}
+                            maxLength={13}
+                            inputMode="numeric"
+                            pattern="\d*"
                           />
                         </div>
                       </div>
@@ -323,7 +309,7 @@ const AddAppoinments = () => {
                             className="form-control"
                             type="text"
                             value={nombre}
-                            disabled={disabedNombreTelefono}
+                            disabled={true}
                             onChange={(e) => setNombre(e.target.value)}
                           />
                         </div>
@@ -337,7 +323,7 @@ const AddAppoinments = () => {
                             className="form-control"
                             type="text"
                             value={telefono}
-                            disabled={disabedNombreTelefono}
+                            disabled={true}
                             onChange={(e) => setTelefono(e.target.value)}
                           />
                         </div>
@@ -422,6 +408,30 @@ const AddAppoinments = () => {
                 </div>
               </div>
             </div>
+            <Modal
+              title="Registrar nuevo paciente"
+              open={showModal}
+              onCancel={() => setShowModal(false)}
+              footer={[
+                <Button key="cancelar" onClick={() => setShowModal(false)}>
+                  Cancelar
+                </Button>,
+                <Button
+                  key="guardar"
+                  type="primary"
+                  onClick={handleGuardarNuevoPaciente}
+                >
+                  Guardar
+                </Button>,
+              ]}
+              width={700}
+            >
+              <Step1
+                formData={nuevoPacienteData}
+                setFormData={setNuevoPacienteData}
+                edit={false}
+              />
+            </Modal>
           </div>
         </div>
       </div>
