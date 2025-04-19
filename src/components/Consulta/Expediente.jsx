@@ -5,39 +5,65 @@ import Header from "../Header";
 import Sidebar from "../Sidebar";
 import { Link, useParams } from "react-router-dom";
 import { formatearFecha, formatearHora } from "../../helpers";
-import moment from "moment";
-import { Table } from "antd";
-
-// Exportar a PDF
-import { pdficon } from "../imagepath";
+import { Table, Select } from "antd";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import FullColorHorizontal from "../../assets/img/FullColorHorizontal.png";
+
+const meses = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
 
 const Expediente = () => {
   const params = useParams();
   const [expediente, setExpediente] = useState(null);
-
-  const [mensaje, setMensaje] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
 
   const expedienteRef = useRef();
-  const handleExportPDF = (paciente) => {
-    const input = expedienteRef.current;
 
-    html2canvas(input, {
-      useCORS: true, // Permite cargar imágenes externas si es necesario
-      scale: 2, // Mejora la calidad de la imagen
-    })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  const handleExportCitaPDF = (paciente, cita) => {
+    const content = document.getElementById(`cita-${cita.id_cita}`);
+    if (!content) return;
 
-        pdf.addImage(imgData, "png", 10, 10, pdfWidth - 20, pdfHeight - 20); // Aquí se aplica el padding en el PDF
-        pdf.save(`Expediente de ${paciente.nombre_completo}.pdf`);
-      })
-      .catch((err) => console.error("Error generating PDF", err));
+    const printButtons = content.querySelectorAll(".btn-imprimir-cita");
+    printButtons.forEach((btn) => (btn.style.display = "none"));
+
+    html2canvas(content, { useCORS: true, scale: 2 }).then((canvas) => {
+      printButtons.forEach((btn) => (btn.style.display = "inline-block"));
+
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const logoWidth = pdfWidth * 0.4;
+      const imgHeight = 20;
+      const x = (pdfWidth - logoWidth) / 2;
+
+      const pdfHeight = (canvas.height * (pdfWidth - 20)) / canvas.width;
+
+      pdf.addImage(FullColorHorizontal, "PNG", x, 10, logoWidth, imgHeight);
+      pdf.addImage(
+        imgData,
+        "PNG",
+        10,
+        imgHeight + 15,
+        pdfWidth - 20,
+        pdfHeight
+      );
+      pdf.save(`Cita_${paciente.nombre_completo}_${cita.fecha}.pdf`);
+    });
   };
 
   async function getExpediente() {
@@ -46,18 +72,11 @@ const Expediente = () => {
     }/obtener/antecedentes/${params.id}`;
     try {
       const { data } = await axios(url);
-      console.log("data: ", data)
-      setMensaje("");
-      if (data.mensaje) {
-        setMensaje(data.mensaje);
-        return;
-      }
       setExpediente(data);
-      setIsLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setIsLoading(false);
-      setMensaje(error.response.data.mensaje);
     }
   }
 
@@ -65,250 +84,268 @@ const Expediente = () => {
     getExpediente();
   }, []);
 
+  const availableYears = [
+    ...new Set(expediente?.citas?.map((c) => parseInt(c.fecha.split("-")[0]))),
+  ];
+
+  const availableMonths = [
+    ...new Set(
+      expediente?.citas
+        ?.filter(
+          (c) =>
+            !selectedYear || parseInt(c.fecha.split("-")[0]) === selectedYear
+        )
+        .map((c) => parseInt(c.fecha.split("-")[1]))
+    ),
+  ];
+
+  const filteredCitas = expediente?.citas?.filter((c) => {
+    const [year, month] = c.fecha.split("-").map(Number);
+    return (
+      (!selectedYear || year === selectedYear) &&
+      (!selectedMonth || month === selectedMonth)
+    );
+  });
+
   return (
     <>
-      <div>
-        <Header />
-        <Sidebar
-          id="menu-item6"
-          id1="menu-items6"
-          activeClassName="examenfisico-list"
-        />
-        <div className="page-wrapper">
-          <div className="content">
-            <div className="page-header">
-              <div className="row">
-                <div className="col-sm-12">
-                  <ul className="breadcrumb">
-                    <li className="breadcrumb-item">
-                      <Link to="#">Expediente</Link>
-                    </li>
-                  </ul>
-                </div>
+      <Header />
+      <Sidebar
+        id="menu-item6"
+        id1="menu-items6"
+        activeClassName="examenfisico-list"
+      />
+      <div className="page-wrapper">
+        <div className="content">
+          <div className="page-header">
+            <div className="row">
+              <div className="col-sm-12">
+                <ul className="breadcrumb">
+                  <li className="breadcrumb-item">
+                    <Link to="#">Expediente</Link>
+                  </li>
+                </ul>
               </div>
             </div>
+          </div>
 
-            <div className="row" ref={expedienteRef}>
-              <div className="col-sm-12">
-                <div className="card">
-                  <div className="card-body">
-                    <form>
+          <div className="row" ref={expedienteRef}>
+            <div className="col-sm-12">
+              <div className="card">
+                <div className="card-body">
+                  {isLoading ? (
+                    <div className="d-flex justify-content-center align-items-center w-100 py-5">
+                      <div
+                        className="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span className="visually-hidden">Cargando...</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="d-flex justify-content-between mb-2">
+                        <h4>Datos del paciente</h4>
+                      </div>
+
                       <div className="row">
-                        {isLoading ? (
-                          <div className="d-flex justify-content-center align-items-center w-100 py-5">
-                            <div
-                              className="spinner-border text-primary"
-                              role="status"
+                        <div className="col-md-4">
+                          <p>
+                            <strong>Nombre:</strong>{" "}
+                            {expediente.paciente?.nombre_completo}
+                          </p>
+                          <p>
+                            <strong>Identidad:</strong>{" "}
+                            {expediente.paciente?.numero_identidad}
+                          </p>
+                          <p>
+                            <strong>Edad:</strong> {expediente.paciente?.edad}
+                          </p>
+                        </div>
+                        <div className="col-md-4">
+                          <p>
+                            <strong>Teléfono:</strong>{" "}
+                            {expediente.paciente?.telefono}
+                          </p>
+                          <p>
+                            <strong>Dirección:</strong>{" "}
+                            {expediente.paciente?.direccion}
+                          </p>
+                          <p>
+                            <strong>Correo:</strong>{" "}
+                            {expediente.paciente?.correo_electronico}
+                          </p>
+                        </div>
+                        <div className="col-md-4">
+                          <div className="mb-3">
+                            <label>Año</label>
+                            <Select
+                              allowClear
+                              className="w-100"
+                              placeholder="Seleccionar año"
+                              value={selectedYear}
+                              onChange={(value) => {
+                                setSelectedYear(value);
+                                setSelectedMonth(null);
+                              }}
                             >
-                              <span className="visually-hidden">
-                                Cargando...
-                              </span>
-                            </div>
+                              {availableYears.map((y) => (
+                                <Select.Option key={y} value={y}>
+                                  {y}
+                                </Select.Option>
+                              ))}
+                            </Select>
                           </div>
+                          <div>
+                            <label>Mes</label>
+                            <Select
+                              allowClear
+                              className="w-100"
+                              placeholder="Seleccionar mes"
+                              value={selectedMonth}
+                              onChange={(value) => setSelectedMonth(value)}
+                            >
+                              {availableMonths.map((m) => (
+                                <Select.Option key={m} value={m}>
+                                  {meses[m - 1]}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        {filteredCitas?.length === 0 ? (
+                          <p className="fw-bold text-center">
+                            No hay citas para el filtro seleccionado.
+                          </p>
                         ) : (
-                          <>
-                            {expediente && (
-                              <div className="d-flex flex-column mb-3">
-                                <div className="d-flex align-items-center justify-content-between w-100 mb-4">
-                                  <h4>Datos del paciente</h4>
-                                  <button
-                                    className="btn"
-                                    type="button"
-                                    onClick={() =>
-                                      handleExportPDF(expediente.paciente)
-                                    }
-                                  >
-                                    <img src={pdficon} alt="guardar pdf" />
-                                  </button>
-                                </div>
-                                <div className="row">
-                                  <div className="col-md-6">
-                                    <p>
-                                      Nombre del paciente:{" "}
-                                      <span className="fw-bold">
-                                        {expediente.paciente?.nombre_completo}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Identidad:{" "}
-                                      <span className="fw-bold">
-                                        {expediente.paciente?.numero_identidad}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Edad:{" "}
-                                      <span className="fw-bold">
-                                        {expediente.paciente?.edad}
-                                      </span>
-                                    </p>
-                                  </div>
-
-                                  <div className="col-md-6">
-                                    <p>
-                                      Número de teléfono:{" "}
-                                      <span className="fw-bold">
-                                        {expediente.paciente?.telefono}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Dirección:{" "}
-                                      <span className="fw-bold">
-                                        {expediente.paciente?.direccion ||
-                                          "Sin especificar"}
-                                      </span>
-                                    </p>
-                                    <p>
-                                      Correo Electronico:{" "}
-                                      <span className="fw-bold">
-                                        {expediente.paciente
-                                          ?.correo_electronico ||
-                                          "Sin especificar"}
-                                      </span>
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="row">
-                                  <div className="col-12 mt-4">
-                                    <h4 className="mb-3">Datos de la cita</h4>
-                                    <div className="row">
-                                      <div className="col-md-12">
-                                        <p>
-                                          Motivo:{" "}
-                                          <span className="fw-bold">
-                                            {
-                                              expediente.preclinica.cita
-                                                ?.motivo_cita
-                                            }
-                                          </span>
-                                        </p>
-                                      </div>
-                                      <div className="col-md-6">
-                                        <p>
-                                          Fecha:{" "}
-                                          <span className="fw-bold">
-                                            {
-                                              expediente.preclinica.cita
-                                                ?.fecha
-                                            }
-                                          </span>
-                                        </p>
-                                      </div>
-                                      <div className="col-md-6">
-                                        <p>
-                                          Hora:{" "}
-                                          <span className="fw-bold">
-                                          {moment(expediente.preclinica.cita?.hora, "HH:mm:ss").format("h:mm A")}
-                                          </span>
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <Table
-                                      pagination={false}
-                                      bordered
-                                      size="middle"
-                                      columns={[
-                                        {
-                                          title: "Presión Arterial",
-                                          dataIndex: "presion_arterial",
-                                          key: "presion_arterial",
-                                        },
-                                        {
-                                          title: "Frecuencia Cardíaca",
-                                          dataIndex: "frecuencia_cardiaca",
-                                          key: "frecuencia_cardiaca",
-                                        },
-                                        {
-                                          title: "Frecuencia Respiratoria",
-                                          dataIndex: "frecuencia_respiratoria",
-                                          key: "frecuencia_respiratoria",
-                                        },
-                                        {
-                                          title: "Temperatura",
-                                          dataIndex: "temperatura",
-                                          key: "temperatura",
-                                        },
-                                        {
-                                          title: "Peso Actual",
-                                          dataIndex: "peso_actual",
-                                          key: "peso_actual",
-                                        },
-                                        {
-                                          title: "Talla",
-                                          dataIndex: "talla",
-                                          key: "talla",
-                                        },
-                                        {
-                                          title: "Glucometría",
-                                          dataIndex: "glucometria",
-                                          key: "glucometria",
-                                        },
-                                      ]}
-                                      dataSource={
-                                        expediente?.preclinica
-                                          ? [
-                                              {
-                                                ...expediente.preclinica,
-                                                key: "1",
-                                              },
-                                            ]
-                                          : []
-                                      }
-                                    />
-                                  </div>
-                                </div>
+                          filteredCitas.map((cita, idx) => (
+                            <div
+                              key={idx}
+                              id={`cita-${cita.id_cita}`}
+                              className="mb-5 border rounded p-3"
+                            >
+                              <div className="d-flex justify-content-between mb-2">
+                                <h4 className="fw-bold">
+                                  Cita del {formatearFecha(cita.fecha)} -{" "}
+                                  {formatearHora(cita.hora)}
+                                </h4>
+                                <button
+                                  className="btn btn-sm btn-outline-primary btn-imprimir-cita"
+                                  onClick={() =>
+                                    handleExportCitaPDF(
+                                      expediente.paciente,
+                                      cita
+                                    )
+                                  }
+                                >
+                                  Imprimir cita
+                                </button>
                               </div>
-                            )}
 
-                            <div className="col-12">
-                              {expediente?.diagnosticos?.length === 0 ? (
-                                <div>
-                                  <p className="text-center fw-bold p-2">
-                                    {mensaje ||
-                                      "No hay diagnósticos registrados."}
-                                  </p>
-                                  <Link
-                                    to="/consultalista"
-                                    className="text-center d-block"
-                                  >
-                                    Regresar
-                                  </Link>
-                                </div>
-                              ) : (
-                                <table className="table table-striped">
-                                  <thead>
-                                    <tr>
-                                      <th>Fecha cita</th>
-                                      <th>Hora</th>
-                                      <th>Historia enfermedad</th>
-                                      <th>Diagnóstico</th>
-                                      <th>Receta</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {expediente.diagnosticos.map((consulta) => (
-                                      <tr key={consulta.id_diagnostico}>
-                                        <td>
-                                          {formatearFecha(
-                                            expediente.cita?.fecha
-                                          )}
-                                        </td>
-                                        <td>
-                                          {formatearHora(expediente.cita?.hora)}
-                                        </td>
-                                        <td>{consulta.historia_enfermedad}</td>
-                                        <td>{consulta.diagnostico}</td>
-                                        <td>{consulta.receta}</td>
+                              <div className="mb-3">
+                                <p>
+                                  <strong>Paciente:</strong>{" "}
+                                  {expediente.paciente.nombre_completo}
+                                </p>
+                                <p>
+                                  <strong>Identidad:</strong>{" "}
+                                  {expediente.paciente.numero_identidad}
+                                </p>
+                                <p>
+                                  <strong>Edad:</strong>{" "}
+                                  {expediente.paciente.edad}
+                                </p>
+                                <p>
+                                  <strong>Teléfono:</strong>{" "}
+                                  {expediente.paciente.telefono}
+                                </p>
+                              </div>
+
+                              <p>
+                                <strong>Motivo:</strong> {cita.motivo_cita}
+                              </p>
+                              <p>
+                                <strong>Doctor:</strong>{" "}
+                                {cita.usuario?.nombre_de_usuario}
+                              </p>
+
+                              {cita.preclinica && (
+                                <>
+                                  <h4 className="fw-bold mt-5">Preclínica</h4>
+                                  <Table
+                                    pagination={false}
+                                    bordered
+                                    size="middle"
+                                    columns={[
+                                      {
+                                        title: "Presión Arterial",
+                                        dataIndex: "presion_arterial",
+                                      },
+                                      {
+                                        title: "Frec. Cardíaca",
+                                        dataIndex: "frecuencia_cardiaca",
+                                      },
+                                      {
+                                        title: "Frec. Respiratoria",
+                                        dataIndex: "frecuencia_respiratoria",
+                                      },
+                                      {
+                                        title: "Temperatura",
+                                        dataIndex: "temperatura",
+                                      },
+                                      {
+                                        title: "Peso",
+                                        dataIndex: "peso_actual",
+                                      },
+                                      { title: "Talla", dataIndex: "talla" },
+                                      {
+                                        title: "Glucometría",
+                                        dataIndex: "glucometria",
+                                      },
+                                    ]}
+                                    dataSource={[
+                                      { ...cita.preclinica, key: idx },
+                                    ]}
+                                  />
+                                </>
+                              )}
+
+                              {cita.diagnosticos?.length > 0 && (
+                                <>
+                                  <h4 className="mt-4 fw-bold">Diagnóstico</h4>
+                                  <table className="table table-striped">
+                                    <thead>
+                                      <tr>
+                                        <th>Historia</th>
+                                        <th>Diagnóstico</th>
+                                        <th>Receta</th>
+                                        <th>Examen Físico</th>
+                                        <th>Indicaciones</th>
                                       </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
+                                    </thead>
+                                    <tbody>
+                                      {cita.diagnosticos.map((d, i) => (
+                                        <tr key={i}>
+                                          <td>{d.historia_enfermedad}</td>
+                                          <td>{d.diagnostico}</td>
+                                          <td>{d.receta}</td>
+                                          <td>{d.examen_fisico}</td>
+                                          <td>{d.indicaciones}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </>
                               )}
                             </div>
-                          </>
+                          ))
                         )}
                       </div>
-                    </form>
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
