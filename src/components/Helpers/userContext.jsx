@@ -20,9 +20,13 @@ export const UserProvider = ({ children }) => {
     const usuario = JSON.parse(localStorage.getItem("user"));
     setUsuarioLogged(usuario ? usuario : { id_rol: "5" });
   };
+  const clearUser = () => {
+    localStorage.removeItem("user");
+    setUsuarioLogged(null);
+  };
 
   return (
-    <UserContext.Provider value={{ usuarioLogged, updateUser, reloadUser }}>
+    <UserContext.Provider value={{ usuarioLogged, updateUser, reloadUser, clearUser }}>
       {children}
     </UserContext.Provider>
   );

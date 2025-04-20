@@ -1,19 +1,18 @@
-/* eslint-disable react/jsx-no-duplicate-props */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../Header";
 import Sidebar from "../Sidebar";
 import Select from "react-select";
 import { Link } from "react-router-dom";
+import { Card, Row, Col } from "antd";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import { formatearFecha, formatearHora } from "../../helpers";
 
 const ConsultaItinerario = () => {
-
   const [doctorSelected, setDoctorSelected] = useState(null);
   const [doctores, setDoctores] = useState([]);
   const [citas, setCitas] = useState([]);
+  const [msg, setMsg] = useState("");
 
   const [fecha, setFecha] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
@@ -30,35 +29,37 @@ const ConsultaItinerario = () => {
 
       setDoctores(doctoresTransformed);
       setDoctorSelected({
-        value: data.length > 0 ? data[0].id_usuario.toString() : '',
-        label: data.length > 0 ? data[0].nombre_de_usuario : '',
+        value: data.length > 0 ? data[0].id_usuario.toString() : "",
+        label: data.length > 0 ? data[0].nombre_de_usuario : "",
       });
-
     } catch (error) {
-      console.error('Error al cargar doctores:', error);
+      console.error("Error al cargar doctores:", error);
     }
   }
 
   async function getItinerario() {
     setCitas([]);
-    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/itinerario?id_doctor=${doctorSelected.value}&fecha=${fecha}`;
+    const url = `${
+      import.meta.env.VITE_REACT_APP_API_URL
+    }/itinerario?id_doctor=${doctorSelected.value}&fecha=${fecha}`;
     try {
       setIsLoading(true);
       const { data } = await axios.get(url);
       setCitas(data.citas);
-
+      console.log("Citas itinerario: ", data);
+      if (data.citas.length === 0) {
+        setMsg("No hay citas para el doctor seleccionado en esta fecha.");
+      }
       setIsLoading(false);
-
     } catch (error) {
       setIsLoading(false);
-      console.error('Error al cargar doctores:', error);
+      console.error("Error al cargar doctores:", error);
     }
   }
 
   useEffect(() => {
     getDoctores();
   }, []);
-
 
   return (
     <div>
@@ -94,12 +95,12 @@ const ConsultaItinerario = () => {
               <div className="card">
                 <div className="card-body">
                   <form>
-
                     <div className="row">
-                      <div className="col-12 col-md-6 col-xl-6">
+                      <div className="col-12 col-md-5 col-xl-5">
                         <div className="form-group local-forms">
                           <label>
-                            Seleccione doctor: {' '} <span className="login-danger">*</span>
+                            Seleccione doctor:{" "}
+                            <span className="login-danger">*</span>
                           </label>
                           <Select
                             value={doctorSelected}
@@ -141,17 +142,22 @@ const ConsultaItinerario = () => {
                         </div>
                       </div>
 
-                      <div className="col-12 col-md-6 col-xl-6">
+                      <div className="col-10 col-md-5 col-xl-5">
                         <input
                           type="date"
                           className="form-control"
                           value={fecha}
-                          onChange={e => setFecha(e.target.value)}
-                          min={`${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().length == 1 ? '0' : ''}${new Date().getMonth() + 1}-${new Date().getDate()}`}
-                        // min={'2025-01-14'}
+                          onChange={(e) => setFecha(e.target.value)}
+                          min={`${new Date().getFullYear()}-${
+                            (new Date().getMonth() + 1).toString().length == 1
+                              ? "0"
+                              : ""
+                          }${
+                            new Date().getMonth() + 1
+                          }-${new Date().getDate()}`}
                         />
                       </div>
-                      <div className="col-12 col-md-6 col-xl-6">
+                      <div className="col-2 col-md-2 col-xl-2">
                         <button
                           type="button"
                           className="btn-primary p-1 text-white"
@@ -160,33 +166,65 @@ const ConsultaItinerario = () => {
                           Buscar
                         </button>
                       </div>
-
                     </div>
 
                     {isLoading ? (
-                      <p className="m-4 text-center">Obteniendo Información...</p>
+                      <p className="m-4 text-center">
+                        Obteniendo Información...
+                      </p>
                     ) : null}
 
                     <div className="mt-3">
                       {citas.length ? (
                         <div className="">
-                          <h4 className="w-75 mx-auto">Citas del doctor: {doctorSelected.label.toUpperCase()}</h4>
+                          <h4 className="w-75 mb-4 fw-bold">
+                            Citas del doctor:{" "}
+                            {doctorSelected.label.toUpperCase()}
+                          </h4>
 
-                          {citas.map((cita, i) => (
-                            <div className="border p-2 shadow-sm w-75 mx-auto" key={i}>
-                              <p className="fw-bold mb-2">{i + 1}.</p>
-                              <p className="fw-bold mb-2">Paciente: {' '} <span className="fw-normal">{cita.paciente.nombre_completo}</span></p>
-                              <p className="fw-bold mb-2">Fecha: {' '} <span className="fw-normal">{formatearFecha(cita.fecha)}</span></p>
-                              <p className="fw-bold mb-2">Hora: {' '} <span className="fw-normal">{formatearHora(cita.hora)}</span></p>
-                              <p className="fw-bold mb-2">Estado: {' '} <span className="fw-normal">{cita.estado.descripcion.toUpperCase()}</span></p>
-                              <p className="fw-bold mb-2">Motivo de la cita: {' '} <span className="fw-normal">{cita.motivo_cita}</span></p>
-                            </div>
-                          ))}
-
+                          <Row gutter={[16, 16]} justify="center">
+                            {citas.map((cita, i) => (
+                              <Col
+                                key={i}
+                                xs={24}
+                                sm={24}
+                                md={20}
+                                lg={12}
+                                xl={12}
+                                className="d-flex justify-content-center"
+                              >
+                                <Card
+                                  title={`#${i + 1} - ${
+                                    cita.paciente.nombre_completo
+                                  }`}
+                                  bordered={true}
+                                  className="w-100 shadow-sm"
+                                >
+                                  <p>
+                                    <strong>Fecha:</strong>{" "}
+                                    {formatearFecha(cita.fecha)}
+                                  </p>
+                                  <p>
+                                    <strong>Hora:</strong>{" "}
+                                    {formatearHora(cita.hora)}
+                                  </p>
+                                  <p>
+                                    <strong>Estado:</strong>{" "}
+                                    {cita.estado.descripcion.toUpperCase()}
+                                  </p>
+                                  <p>
+                                    <strong>Motivo de la cita:</strong>{" "}
+                                    {cita.motivo_cita}
+                                  </p>
+                                </Card>
+                              </Col>
+                            ))}
+                          </Row>
                         </div>
-                      ) : null}
+                      ) : (
+                        <p className="text-center mt-4">{msg}</p>
+                      )}
                     </div>
-
                   </form>
                 </div>
               </div>

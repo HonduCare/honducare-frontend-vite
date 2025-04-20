@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useContext, useState } from "react";
+import { UserContext } from "../../Helpers/userContext";
 import FeatherIcon from "feather-icons-react/build/FeatherIcon";
 import Sidebar from "../../Sidebar";
 import Header from "../../Header";
@@ -6,17 +8,39 @@ import { morning_img_01 } from "../../imagepath";
 import { Link } from "react-router-dom";
 
 const Bienvenida = () => {
-
-  const [usuarioLogged, setUsuarioLogged] = useState({});
-
-  async function getInfo() {
-    const usuario = JSON.parse(localStorage.getItem('user'));
-    setUsuarioLogged(usuario);
-  }
+  const { usuarioLogged, reloadUser } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getInfo();
+    const init = async () => {
+      await reloadUser();
+      const firstLogin = verifyFirtsLogin();
+      if (!firstLogin) {
+        setLoading(false);
+      }
+    };
+    init();
   }, []);
+
+  const verifyFirtsLogin = () => {
+    const validator = localStorage.getItem("firstLogin");
+    if (validator === "true") {
+      localStorage.removeItem("firstLogin");
+      window.location.reload();
+      return true;
+    }
+    return false;
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="sr-only">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -50,15 +74,13 @@ const Bienvenida = () => {
               <div className="col-md-6">
                 <div className="morning-user">
                   <h2>
-                    Te damos la bienvenida {''}
-                    <span>
-                      {usuarioLogged.id_rol == 1 ? 'Dr. ' : ''}
-                    </span>
+                    Te damos la bienvenida{" "}
+                    <span>{usuarioLogged?.id_rol == 1 ? "Dr. " : ""}</span>
                     <span className="font-bold">
-                      {usuarioLogged.nombre_de_usuario}
+                      {usuarioLogged?.nombre_de_usuario}
                     </span>
                   </h2>
-                  <p>Ten un buen día y una exelente jornada laboral</p>
+                  <p>Ten un buen día y una excelente jornada laboral</p>
                 </div>
               </div>
               <div className="col-md-6 position-blk">
@@ -75,5 +97,3 @@ const Bienvenida = () => {
 };
 
 export default Bienvenida;
-
-

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../Helpers/userContext";
@@ -22,7 +23,8 @@ const Calender = () => {
       const response = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/citas`
       );
-      const citas = response.data.map((cita) => ({
+
+      let citas = response.data.map((cita) => ({
         title: cita.paciente.nombre_completo,
         date: cita.fecha.split("T")[0],
         start: `${cita.fecha}T${cita.hora}`,
@@ -32,9 +34,17 @@ const Calender = () => {
           id: cita.id_cita,
           paciente: cita.paciente,
         },
+        doctor:{
+          nombre_doctor: cita.usuario.nombre_de_usuario,
+          id_doctor: cita.usuario.id_usuario
+        }
       }));
-
+      console.log(usuarioLogged)
+      if(usuarioLogged.rol.rol === "Doctor"){
+        citas = citas.filter((cita) => cita.doctor.id_doctor === usuarioLogged.id_usuario);
+      }
       setEvents(citas);
+      //console.log("Citas del día:", response.data);
     } catch (error) {
       console.error("Error al obtener las citas:", error);
     }

@@ -30,18 +30,22 @@ const Header = () => {
   };
 
   async function getItinerario() {
-    const url = `${
-      import.meta.env.VITE_REACT_APP_API_URL
-    }/itinerario?id_doctor=${usuarioLogged.id_usuario}`;
-
+    const url = `${import.meta.env.VITE_REACT_APP_API_URL}/itinerario?id_doctor=${usuarioLogged.id_usuario}`;
+  
     try {
       const { data } = await axios(url);
-      console.log("Citas itinerario: ",data)
-      setCitas(data.citas);
+      console.log("Citas itinerario: ", data);
+  
+      const citasFiltradas = data.citas.filter(
+        (cita) => [1, 2, 3].includes(cita.id_estado_cita)
+      );
+  
+      setCitas(citasFiltradas);
     } catch (error) {
       console.log(error);
     }
   }
+  
 
   const cerrarSesion = async () =>{
   await signOut(auth);

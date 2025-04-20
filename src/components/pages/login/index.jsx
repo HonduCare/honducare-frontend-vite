@@ -48,6 +48,7 @@ const Login = () => {
       }
       if (response.data.autenticated == true ) {
         localStorage.setItem("user", JSON.stringify(response.data.data));
+        localStorage.setItem("firstLogin", true);
         navigate("/Bienvenido");
       } else {
         Swal.fire({
