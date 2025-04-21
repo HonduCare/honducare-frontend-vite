@@ -10,7 +10,7 @@ import { Modal, Button } from "antd";
 import Step1 from "../patients/Formularios/Step1";
 import Swal from "sweetalert2";
 import axios from "axios";
-import createAuthHeaders from "../../helpers/createAuthHeaders";
+import createAuthHeaders from "../../helpers/createAuthHeaders"; 
 
 const AddAppoinments = () => {
   const navigate = useNavigate();
@@ -73,6 +73,24 @@ const AddAppoinments = () => {
     selectedOption,
   ]);
   
+  const closeModal = () => {
+    setShowModal(false);
+    setNumeroIdentidad("");
+    setNuevoPacienteData({
+      nombre_completo: "",
+      numero_identidad: numeroIdentidad,
+      correo_electronico: "",
+      telefono: "",
+      id_sexo: null,
+      fecha_nacimiento: "",
+      edad: "",
+      nacionalidad: null,
+      id_documento: { value: 2, label: "Identidad" },
+      id_ocupacion: null,
+      id_estado_civil: null,
+      direccion: "",
+    })
+  }
 
   const searchPaciente = () => {
     if (numeroIdentidad.length < 13) return;
@@ -411,9 +429,9 @@ const AddAppoinments = () => {
             <Modal
               title="Registrar nuevo paciente"
               open={showModal}
-              onCancel={() => setShowModal(false)}
+              onCancel={() => closeModal()}
               footer={[
-                <Button key="cancelar" onClick={() => setShowModal(false)}>
+                <Button key="cancelar" onClick={() => closeModal()}>
                   Cancelar
                 </Button>,
                 <Button
@@ -430,6 +448,7 @@ const AddAppoinments = () => {
                 formData={nuevoPacienteData}
                 setFormData={setNuevoPacienteData}
                 edit={false}
+                isModal={true}
               />
             </Modal>
           </div>

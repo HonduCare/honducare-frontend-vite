@@ -9,7 +9,7 @@ const documentTypes = [
 
 const selectedOption = documentTypes.find((opt) => opt.value === 2);
 
-const Step1 = ({ formData, setFormData, edit  }) => {
+const Step1 = ({ formData, setFormData, edit, isModal  }) => {
   const [genderOptions, setGenderOptions] = useState([]);
   const [civilStatusOptions, setCivilStatusOptions] = useState([]);
   const [occupationOptions, setOccupationOptions] = useState([]);
@@ -101,9 +101,9 @@ const Step1 = ({ formData, setFormData, edit  }) => {
                   handleChange("numero_identidad", value);
                 }
               }}
-              maxLength={13} // Asegura que no se puedan ingresar más de 13 caracteres desde el teclado
+              maxLength={13} 
               placeholder="Ingrese su identidad (13 dígitos)"
-              readOnly={edit} // Campo de solo lectura si edit es true
+              readOnly={edit|| isModal} 
             />
           </div>
 

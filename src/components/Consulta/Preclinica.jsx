@@ -24,7 +24,7 @@ const Preclinica = () => {
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/obtener/cita/hoy/today`
-      ); // Ruta de tu API
+      ); 
       let citasFiltradas = data;
       if (usuarioLogged.rol.rol === "Doctor") {
         citasFiltradas = data.filter(

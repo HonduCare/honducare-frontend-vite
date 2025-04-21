@@ -122,7 +122,6 @@ const ConsultaExpediente = () => {
           <Link
             key="info"
             to={`/expense-report/${expediente?.paciente?.id_paciente}`}
-            target="_blank"
             className="btn btn-outline-primary mx-3"
           >
             Ver más información
@@ -130,7 +129,6 @@ const ConsultaExpediente = () => {
           <Link
             key="antecedentes"
             to={`/expediente/${expediente?.paciente?.id_paciente}`}
-            target="_blank"
             className="btn btn-outline-secondary"
           >
             Consultar antecedentes
